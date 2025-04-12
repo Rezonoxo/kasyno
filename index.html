@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kosierb's Casino - Jednoręki Cwel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Kasyno</div>
+    <div class="balance">
+      <span>Saldo:</span>
+      <span class="amount" id="balance">1000</span>
+      <span class="currency">💰</span>
+    </div>
+    <button id="resetButton" onclick="resetGame()">
+        <i class="fas fa-redo"></i> Reset
+    </button>
+  </div>
+
+  <div class="container">
+    <h1>Jednoręki Cwel</h1>
+    
+    <div class="controls">
+      <!-- Ustawienia stawki i mnożnika -->
+      <div class="bet-setting">
+        <label>Stawka: 
+          <input id="betInput" type="number" value="100" min="1" />
+        </label>
+        <div class="multiplier">
+          <span>Mnożnik:</span>
+          <span id="multiplierValue">10</span>x
+        </div>
+      </div>
+
+      <!-- Formularz regulacji gotówki -->
+      <div id="adjustForm">
+        <input type="number" id="adjustValue" placeholder="Kwota" value="100" />
+        <button onclick="adjustBalance()">
+          <i class="fas fa-plus-minus"></i> Zmień saldo
+        </button>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <!-- Sloty -->
+      <div class="slots">
+        <div class="slot" id="slot1">🍒</div>
+        <div class="slot" id="slot2">🍒</div>
+        <div class="slot" id="slot3">🍒</div>
+      </div>
+      <button id="spinButton" onclick="startSpin()">
+        <i class="fas fa-spin fa-dice"></i> Zakręć! 🎰
+      </button>
+      <div class="result" id="result"></div>
+    </div>
+
+    <!-- Statystyki -->
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-label">Spiny</div>
+        <div class="stat-value" id="totalSpins">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Wygrane</div>
+        <div class="stat-value" id="totalWins">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Najwyższa wygrana</div>
+        <div class="stat-value" id="highestWin">0</div>
+      </div>
+    <div class="stat-item">
+        <div class="stat-label">Dodane pieniądze</div>
+        <div class="stat-value" id="totalAdded">0</div>
+    </div>
+    </div>
+  </div>
+<script src="skrypty.js"></script>
+</body>
+</html>
