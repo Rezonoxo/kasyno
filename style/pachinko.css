@@ -1,0 +1,395 @@
+/* === ZMIENNE GLOBALNE === */
+:root {
+  --color-primary: #1a2c38;
+  --color-secondary: #263848;
+  --color-accent: #00e701;
+  --color-accent-hover: #00b801;
+  --color-dark: #10202e;
+  --color-border: #3d5466;
+  --color-text: #fff;
+  --color-text-muted: #a0b4c5;
+  --color-win: #00ff44;
+  --color-lose: #ff4747;
+  --spacing-sm: 8px;
+  --spacing-md: 15px;
+  --spacing-lg: 30px;
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* === NAVBAR === */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.balance {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.amount {
+  font-weight: bold;
+}
+
+#resetButton {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: none;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#resetButton:hover {
+  background-color: var(--color-border);
+}
+
+/* === KONTENER GŁÓWNY === */
+.container {
+  margin: 100px auto 40px;
+  max-width: 800px;
+  background: var(--color-primary);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  color: var(--color-text);
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-accent);
+  text-align: center;
+}
+
+/* === KONTROLKI I FORMULARZE === */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.bet-setting {
+  background: var(--color-secondary);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.bet-setting label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  width: 100%;
+}
+
+.bet-setting input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  background: var(--color-primary);
+  color: var(--color-text);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  transition: border-color 0.2s;
+}
+
+.bet-setting input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.multiplier {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+#adjustForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+#adjustForm button {
+  background-color: var(--color-border);
+  color: var(--color-text);
+  border: none;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#adjustForm button:hover {
+  background-color: var(--color-accent);
+  color: #000;
+}
+
+/* === OBSZAR GRY === */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.patchinko-board {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  background: var(--color-dark);
+  border: 3px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+/* Elementy gry */
+.pin {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: red;
+  border-radius: 50%;
+  z-index: 10;
+  transition: top 0.2s linear, left 0.2s linear;
+}
+
+.slot {
+  position: absolute;
+  bottom: 0;
+  width: 40px;
+  height: 30px;
+  background: #222;
+  color: var(--color-text);
+  text-align: center;
+  line-height: 30px;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid #555;
+  z-index: 5;
+}
+
+#dropBallButton {
+  padding: 12px 20px;
+  font-size: 18px;
+  background: var(--color-accent);
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#dropBallButton:hover {
+  background: var(--color-accent-hover);
+}
+
+.result {
+  width: 100%;
+  min-height: 60px;
+  font-size: 16px;
+  font-weight: bold;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.4;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.result.win {
+  background-color: rgba(0, 255, 0, 0.1);
+  color: var(--color-win);
+  animation: winPulse 1s infinite alternate;
+}
+
+.result.lose {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: var(--color-lose);
+}
+
+/* === STATYSTYKI === */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 kolumny na PC */
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-secondary);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0; /* Zapobiega problemom z overflow */
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+/* === ANIMACJE === */
+@keyframes winPulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-accent), inset 0 0 10px rgba(0, 231, 1, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 15px var(--color-accent), inset 0 0 20px rgba(0, 231, 1, 0.5);
+  }
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 1024px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr); /* 2 kolumny na tabletach */
+  }
+}
+
+@media (max-width: 768px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr); /* 2 kolumny na mniejszych tabletach */
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .container {
+    padding: 20px;
+    margin-top: 140px;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr); /* 2 kolumny na telefonach */
+  }
+}
+
+@media (max-width: 400px) {
+  .navbar {
+    padding: 10px;
+  }
+  
+  .logo {
+    font-size: 20px;
+  }
+  
+  .balance {
+    font-size: 16px;
+  }
+  
+  #resetButton {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .bet-setting input {
+    font-size: 14px;
+  }
+  
+  #dropBallButton {
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+  
+  .patchinko-board {
+    width: 280px;
+    height: 380px;
+  }
+  
+  .result {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .patchinko-board {
+    width: 250px;
+    height: 350px;
+  }
+  
+  .stats {
+    grid-template-columns: 1fr; /* 1 kolumna na bardzo małych ekranach */
+  }
+  
+  .stat-label, .stat-value {
+    font-size: 13px; /* Nieco mniejsze czcionki */
+  }
+}

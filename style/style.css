@@ -91,3 +91,32 @@
     cursor: not-allowed;
     transform: none;
   }
+  button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #00e701;
+    color: #0f212e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    margin: 10px 0;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: #00c701;
+    transform: translateY(-2px);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  button:disabled {
+    background-color: #2a3f4c;
+    color: #597183;
+    cursor: not-allowed;
+    transform: none;
+  }

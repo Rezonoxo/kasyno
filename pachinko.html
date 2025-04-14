@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kosierb's Casino - Jednoręki Cwel</title>
+  <title>Kosierb's Casino - Pachinko</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="pinokio.css" />
+  <link rel="stylesheet" href="style/style.css" />
+  <link rel="stylesheet" href="style/pachinko.css" />
 </head>
 <body>
   <!-- Navbar -->
@@ -23,7 +23,7 @@
   </div>
 
   <div class="container">
-    <h1>Pinokio</h1>
+    <h1>Pachinko</h1>
   <div class="controls">
     <!-- Ustawienia stawki i mnożnika -->
     <div class="bet-setting">
@@ -34,39 +34,46 @@
         <span>Mnożnik:</span>
         <span id="multiplierValue">10</span>x
       </div>
+      <div id="adjustForm">
+        <input type="number" id="adjustValue" placeholder="Kwota" value="100" />
+        <button onclick="adjustBalance()">
+          <i class="fas fa-plus-minus"></i> Zmień saldo
+        </button>
+        <div class="result" id="result"></div>
+      </div>
     </div>
         <!-- Gra -->
         <div class="game-area">
             <div class="patchinko-board" id="patchinkoBoard">
               <!-- Kule i ścieżki spadających piłek będą tworzone dynamicznie -->
             </div>
+            <p style="text-align: center; font-weight: bold; font-size: 1.2rem; color: #fff; background: linear-gradient(90deg, red, orange, limegreen, orange, red); padding: 10px; border-radius: 10px; font-family: 'Arial', sans-serif; letter-spacing: 2px; text-shadow: 0 0 5px #000;">x0  |  x0.5  |  x1  |  x5  |  x1  |  x0.5  |  x0</p>
             <button id="dropBallButton" onclick="dropBall()">
-              <i class="fas fa-arrow-down"></i> Rzuć kulką! 🔴
+              <i class="fas fa-fade fa-arrow-down"></i> Rzuć kulką! 🔴
             </button>
-            <div class="result" id="result"></div>
           </div>
       
           <!-- Statystyki -->
-          <div class="stats">
-            <div class="stat-item">
-              <div class="stat-label">Rzuty</div>
-              <div class="stat-value" id="totalDrops">0</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Wygrane</div>
-              <div class="stat-value" id="totalWins">0</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Największa wygrana</div>
-              <div class="stat-value" id="highestWin">0</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Dodane pieniądze</div>
-              <div class="stat-value" id="totalAdded">0</div>
-            </div>
+        </div>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-label">Rzuty</div>
+            <div class="stat-value" id="totalDrops">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Wygrane</div>
+            <div class="stat-value" id="totalWins">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Największa wygrana</div>
+            <div class="stat-value" id="highestWin">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Dodane pieniądze</div>
+            <div class="stat-value" id="totalAdded">0</div>
           </div>
         </div>
     </div>
-<script src="patchinko.js"></script>
+<script src="skrypty/patchinko.js"></script>
 </body>
 </html>
