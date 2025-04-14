@@ -166,13 +166,12 @@ h1 {
 
 .patchinko-board {
   position: relative;
-  width: 300px;
-  height: 400px;
-  background: var(--color-dark);
-  border: 3px solid var(--color-border);
-  border-radius: var(--border-radius-md);
+  width: 320px;
+  height: 400px; /* Stała wysokość niezależnie od ekranu */
   overflow: hidden;
+  margin: 0 auto;
 }
+
 
 /* Elementy gry */
 .pin {

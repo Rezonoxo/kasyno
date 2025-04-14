@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kosierb's Casino - Jednoręki Cwel</title>
+  <title>Kosierb's Casino - Saper</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style/slots.css" />
+  <link rel="stylesheet" href="style/saper.css" />
 </head>
 <body>
   <!-- Navbar -->
@@ -22,47 +23,45 @@
   </div>
 
   <div class="container">
-    <h1>Jednoręki Bandyta</h1>
+    <h1>Saper</h1>
     
     <div class="controls">
-      <!-- Ustawienia stawki i mnożnika -->
+      <!-- Ustawienia stawki i bomb -->
       <div class="bet-setting">
         <label>Stawka: 
-          <input id="betInput" type="number" value="100" min="1" />
+          <input id="betInput" type="number" value="10" min="1" />
+        </label>
+        <label>Liczba bomb (1-24): 
+          <input id="bombsInput" type="number" value="5" min="1" max="24" />
         </label>
         <div class="multiplier">
           <span>Mnożnik:</span>
-          <span id="multiplierValue">10</span>x
+          <span id="multiplierValue">1.00</span>x
         </div>
       </div>
 
-      <!-- Formularz regulacji gotówki -->
-      <div id="adjustForm">
-        <input type="number" id="adjustValue" placeholder="Kwota" value="100" />
-        <button onclick="adjustBalance()">
-          <i class="fas fa-plus-minus"></i> Zmień saldo
+      <!-- Przyciski kontrolne -->
+      <div class="game-controls">
+        <button id="startButton" onclick="startGame()">
+          <i class="fas fa-play"></i> Rozpocznij grę
+        </button>
+        <button id="cashoutButton" onclick="cashOut()" disabled>
+          <i class="fas fa-money-bill-wave"></i> Wypłać
         </button>
       </div>
     </div>
 
     <div class="game-area">
-      <!-- Sloty -->
-      <div class="slots">
-        <div class="slot" id="slot1">🍒</div>
-        <div class="slot" id="slot2">🍒</div>
-        <div class="slot" id="slot3">🍒</div>
-      </div>
-      <button id="spinButton" onclick="startSpin()">
-        <i class="fas fa-spin fa-dice"></i> Zakręć! 🎰
-      </button>
+      <!-- Plansza do gry -->
+      <div id="board" class="board"></div>
       <div class="result" id="result"></div>
     </div>
 
     <!-- Statystyki -->
     <div class="stats">
       <div class="stat-item">
-        <div class="stat-label">Spiny</div>
-        <div class="stat-value" id="totalSpins">0</div>
+        <div class="stat-label">Rozegrane gry</div>
+        <div class="stat-value" id="totalGames">0</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">Wygrane</div>
@@ -72,12 +71,13 @@
         <div class="stat-label">Najwyższa wygrana</div>
         <div class="stat-value" id="highestWin">0</div>
       </div>
-    <div class="stat-item">
+      <div class="stat-item">
         <div class="stat-label">Dodane pieniądze</div>
         <div class="stat-value" id="totalAdded">0</div>
-    </div>
+      </div>
     </div>
   </div>
-<script src="skrypty/slots.js"></script>
+
+  <script src="skrypty/saper.js"></script>
 </body>
 </html>

@@ -1,227 +1,385 @@
-      /* Kontener główny */
-      .container {
-        margin: 100px auto 40px;
-        max-width: 800px;
-        background: #1a2c38;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        text-align: center;
-      }
-  
-      .container h1 {
-        font-size: 1.8rem;
-        margin-bottom: 30px;
-        color: #ecf0f1;
-      }
-      /* Formularz regulacji gotówki */
-      .controls {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-      }
-  
-      #adjustForm {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #263848;
-        padding: 10px;
-        border-radius: 8px;
-      }
-  
-      #adjustForm input[type="number"] {
-        padding: 10px;
-        font-size: 16px;
-        width: 120px;
-        border: 2px solid #3d5466;
-        border-radius: 6px;
-        background-color: #1a2c38;
-        color: #fff;
-      }
-  
-      #adjustForm input[type="number"]:focus {
-        border-color: #00e701;
-        outline: none;
-      }
-  
-      #adjustForm button {
-        background-color: #00e701;
-        padding: 10px 15px;
-      }
-  
-      /* Ustawienia stawki i mnożnika */
-      .bet-setting {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        background: #263848;
-        padding: 10px 15px;
-        border-radius: 8px;
-      }
-  
-      .bet-setting input {
-        padding: 10px;
-        font-size: 16px;
-        width: 100px;
-        background: #1a2c38;
-        color: #fff;
-        border: 2px solid #3d5466;
-        border-radius: 6px;
-      }
-  
-      .bet-setting input:focus {
-        border-color: #00e701;
-        outline: none;
-      }
-  
-      .bet-setting .multiplier {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 16px;
-        color: #00e701;
-        font-weight: bold;
-      }
-  
-      /* Sloty */
-      .game-area {
-        margin-top: 20px;
-        padding: 20px;
-        background: #263848;
-        border-radius: 12px;
-      }
-  
-      .slots {
-        margin: 20px 0;
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-      }
-  
-      .slot {
-        width: 100px;
-        height: 100px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 60px;
-        background: #1a2c38;
-        color: #fff;
-        border-radius: 8px;
-        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
-        transition: transform 0.2s ease;
-        position: relative;
-        overflow: hidden;
-      }
-  
-      .slot.spinning:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 231, 1, 0.1);
-        border: 2px solid #00e701;
-        border-radius: 8px;
-      }
-  
-      .winning-slot {
-        animation: winPulse 1s infinite alternate;
-      }
-  
-      /* Wyniki */
-      .result {
-        margin-top: 20px;
-        font-size: 22px;
-        font-weight: 600;
-        min-height: 30px;
-        padding: 15px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-  
-      .result.win {
-        background: rgba(0, 231, 1, 0.1);
-        color: #00e701;
-      }
-  
-      .result.lose {
-        background: rgba(255, 71, 87, 0.1);
-        color: #ff4757;
-      }
-  
-      #spinButton {
-        font-size: 18px;
-        padding: 15px 30px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin: 20px auto;
-      }
-  
-      /* Stats */
-      .stats {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #263848;
-      }
-  
-      .stat-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-  
-      .stat-label {
-        font-size: 14px;
-        color: #a0b4c5;
-      }
-  
-      .stat-value {
-        font-size: 18px;
-        font-weight: bold;
-        color: #fff;
-      }
-  
-      /* Przejścia i animacje */
-      @keyframes winPulse {
-        0% {
-          box-shadow: 0 0 5px #00e701, inset 0 0 10px rgba(0, 231, 1, 0.3);
-        }
-        100% {
-          box-shadow: 0 0 15px #00e701, inset 0 0 20px rgba(0, 231, 1, 0.5);
-        }
-      }
-  
-      /* Media queries */
-      @media (max-width: 600px) {
-        .container {
-          padding: 20px 10px;
-          margin-top: 80px;
-        }
-        
-        .controls {
-          flex-direction: column;
-          align-items: center;
-        }
-        
-        .bet-setting, #adjustForm {
-          width: 100%;
-        }
-        
-        .slots {
-          gap: 8px;
-        }
-        
-        .slot {
-          width: 80px;
-          height: 80px;
-          font-size: 48px;
-        }
-      }
+/* Globalne ustawienia */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+body {
+  background-color: #0f212e;
+  color: #f5f5f5;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+h1, h2 {
+  font-weight: 600;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #1a2c38;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+.navbar .balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #263848;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+.balance .amount {
+  color: #00e701;
+  font-weight: bold;
+}
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #00e701;
+}
+.balance .currency {
+  font-size: 20px;
+}
+
+/* Przycisk resetowania */
+#resetButton {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #ff4757;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+  font-weight: bold;
+}
+#resetButton:hover {
+  background-color: #e63946;
+  transform: translateY(-2px);
+}
+#resetButton:active {
+  transform: translateY(0);
+}
+#resetButton:disabled {
+  background-color: #2a3f4c;
+  color: #597183;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Przycisk uniwersalny */
+button {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #00e701;
+  color: #0f212e;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+  font-weight: bold;
+}
+button:hover {
+  background-color: #00c701;
+  transform: translateY(-2px);
+}
+button:active {
+  transform: translateY(0);
+}
+button:disabled {
+  background-color: #2a3f4c;
+  color: #597183;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Kontener główny */
+.container {
+  margin: 100px auto 40px;
+  max-width: 800px;
+  background: #1a2c38;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+.container h1 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #ecf0f1;
+}
+
+/* Formularz regulacji gotówki */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+#adjustForm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #263848;
+  padding: 10px;
+  border-radius: 8px;
+}
+#adjustForm input[type="number"] {
+  padding: 10px;
+  font-size: 16px;
+  width: 120px;
+  border: 2px solid #3d5466;
+  border-radius: 6px;
+  background-color: #1a2c38;
+  color: #fff;
+}
+#adjustForm input[type="number"]:focus {
+  border-color: #00e701;
+  outline: none;
+}
+#adjustForm button {
+  background-color: #00e701;
+  padding: 10px 15px;
+}
+
+/* Ustawienia stawki i mnożnika */
+.bet-setting {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #263848;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+.bet-setting input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100px;
+  background: #1a2c38;
+  color: #fff;
+  border: 2px solid #3d5466;
+  border-radius: 6px;
+}
+.bet-setting input:focus {
+  border-color: #00e701;
+  outline: none;
+}
+.bet-setting .multiplier {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  color: #00e701;
+  font-weight: bold;
+}
+
+/* Sloty */
+.game-area {
+  margin-top: 20px;
+  padding: 20px;
+  background: #263848;
+  border-radius: 12px;
+}
+.slots {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.slot {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60px;
+  background: #1a2c38;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.slot.spinning:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 231, 1, 0.1);
+  border: 2px solid #00e701;
+  border-radius: 8px;
+}
+.winning-slot {
+  animation: winPulse 1s infinite alternate;
+}
+
+/* Wyniki */
+.result {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: 600;
+  min-height: 30px;
+  padding: 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.result.win {
+  background: rgba(0, 231, 1, 0.1);
+  color: #00e701;
+}
+.result.lose {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+}
+#spinButton {
+  font-size: 18px;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto;
+}
+
+/* Statystyki */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #263848;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-label {
+  font-size: 14px;
+  color: #a0b4c5;
+}
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Animacje */
+@keyframes winPulse {
+  0% {
+    box-shadow: 0 0 5px #00e701, inset 0 0 10px rgba(0, 231, 1, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 15px #00e701, inset 0 0 20px rgba(0, 231, 1, 0.5);
+  }
+}
+
+/* Responsywność */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+  }
+  h1{
+    padding-top: 70px;
+  }
+
+  .logo {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .balance {
+    color: #00e701;
+    font-weight: bold;
+    scale: 0.9;
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .balance .currency {
+    font-size: 16px;
+  }
+
+  #resetButton {
+    font-size: 14px;
+    padding: 8px 16px;
+    max-width: 100%;
+  }
+
+  .container {
+    padding: 20px 10px;
+    margin-top: 100px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bet-setting,
+  #adjustForm {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #adjustForm input[type="number"] {
+    width: 100%;
+  }
+
+  .slots {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .slot {
+    width: 70px;
+    height: 70px;
+    font-size: 40px;
+  }
+
+  .result {
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  #spinButton {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

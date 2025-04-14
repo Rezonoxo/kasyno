@@ -123,18 +123,15 @@ function dropBall() {
 
   const dropInterval = setInterval(() => {
     frameCount++;
-    
-    // Spowolniona animacja - mniejsze przyrosty i większy interwał
-    top += 15 + Math.sin(frameCount * 0.1) * 2; // Dodanie lekkiego falowania
+
+    top += 15 + Math.sin(frameCount * 0.1) * 2;
     velocityX += (Math.random() - 0.5) * 15;
     left += velocityX;
-    
-    // Efekt grawitacji - przyspieszenie w dół
+
     if (top > 200) {
       top += 1 + (top - 200) * 0.02;
     }
-    
-    // Kolizje z bokami
+
     if (left < 20) {
       left = 20;
       velocityX *= -0.6;
@@ -146,31 +143,41 @@ function dropBall() {
     ball.style.top = `${top}px`;
     ball.style.left = `${left}px`;
 
-    // Warunek zakończenia - dostosowany do większej planszy
-    if (top >= 360) {  // Zwiększona wysokość planszy
+    const boardHeight = board.clientHeight;
+    const endPosition = boardHeight - 40;
+
+    if (top >= endPosition) {
       clearInterval(dropInterval);
-      const slotPosition = Math.max(0, Math.min(6, Math.round((left - 20) / 40)));
+
+      const slotWidth = 41;
+      const slotIndex = Math.max(0, Math.min(6, Math.round((left - 20) / slotWidth)));
+
+      // Ustawienie kulki dokładnie na środek slotu
+      const slotCenter = 20 + slotIndex * slotWidth;
+      ball.style.left = `${slotCenter}px`;
+
       setTimeout(() => {
-        handleResult(slotPosition);
+        handleResult(slotIndex);
         board.removeChild(ball);
       }, 300);
     }
-  }, 100);  // Zwiększony interwał dla płynniejszej animacji
+  }, 100);
 }
+
 
 function handleResult(slot) {
     const resultText = document.querySelector(".result");
     const bet = parseInt(document.querySelector(".bet-setting input").value);
     
     // Mnożniki jak w Stake (bardziej ryzykowne)
-    const multipliers = [0, 0.5, 1, 5, 1, 0.5, 0];
+    const multipliers = [0, 0.5, 1, 4, 1, 0.5, 0];
     
     // Podpisy stawek dla slotów
     const slotNames = [
       "Slot 1: ❌", 
       "Slot 2: 0.5x", 
       "Slot 3: 1x", 
-      "Slot 4: 5x", 
+      "Slot 4: 4x", 
       "Slot 5: 1x", 
       "Slot 6: 0.5x", 
       "Slot 7: ❌"

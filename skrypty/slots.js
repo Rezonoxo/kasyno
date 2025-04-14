@@ -117,7 +117,7 @@ function finalizeSpin(bet, symbolPool) {
     let winAmount = bet * winMultiplier * (specialBonus[finalSymbols[0]] || 1);
     resultDiv.textContent = specialBonus[finalSymbols[0]]
       ? `SUPER! Wygrałeś ${winAmount} 💰 (${specialBonus[finalSymbols[0]]}x bonus)`
-      : `WOW! Wygrałeś ${winAmount} 💰`;
+      : `JACKPOT! Wygrałeś ${winAmount} 💰`;
     resultDiv.className = "result win";
     balance += winAmount;
     totalWins++;
