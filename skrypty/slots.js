@@ -1,53 +1,27 @@
-let balance = parseInt(localStorage.getItem("balance")) || 0;
+// Zmienne stanu gry
+let balance = parseInt(localStorage.getItem("balance")) || 1000;
 const winMultiplier = 10;
 let totalSpins = parseInt(localStorage.getItem("totalSpins")) || 0;
 let totalWins = parseInt(localStorage.getItem("totalWins")) || 0;
 let highestWin = parseInt(localStorage.getItem("highestWin")) || 0;
 let lastBet = parseInt(localStorage.getItem("lastBet")) || 100;
+let totalAdded = parseInt(localStorage.getItem("totalAdded")) || 0;
+let soundEnabled = localStorage.getItem("soundEnabled") !== "false"; // Domyślnie włączony
 
+// Elementy audio
+const spinSound = document.getElementById("spinSound");
+const winSound = document.getElementById("winSound");
+const jackpotSound = document.getElementById("jackpotSound");
+
+// Inicjalizacja
 document.getElementById("betInput").value = lastBet;
+updateBalanceDisplay();
+updateStats();
+updateSoundButton();
 
+// Funkcje pomocnicze
 function updateBalanceDisplay() {
   document.getElementById("balance").textContent = balance;
-}
-
-function saveToLocalStorage() {
-  localStorage.setItem("balance", balance);
-  localStorage.setItem("totalSpins", totalSpins);
-  localStorage.setItem("totalWins", totalWins);
-  localStorage.setItem("highestWin", highestWin);
-  localStorage.setItem("lastBet", document.getElementById("betInput").value);
-}
-
-function adjustBalance() {
-  const value = parseInt(document.getElementById("adjustValue").value);
-  if (!isNaN(value)) {
-    balance += value;
-    updateBalanceDisplay();
-    updateStats();
-    saveToLocalStorage();
-  }
-}
-let totalAdded = parseInt(localStorage.getItem("totalAdded")) || 0;
-
-function adjustBalance() {
-    const value = parseInt(document.getElementById("adjustValue").value);
-    if (!isNaN(value)) {
-        balance += value;
-        totalAdded += value;
-        updateBalanceDisplay();
-        updateStats();
-        saveToLocalStorage();
-    }
-}
-
-function saveToLocalStorage() {
-    localStorage.setItem("balance", balance);
-    localStorage.setItem("totalSpins", totalSpins);
-    localStorage.setItem("totalWins", totalWins);
-    localStorage.setItem("highestWin", highestWin);
-    localStorage.setItem("lastBet", document.getElementById("betInput").value);
-    localStorage.setItem("totalAdded", totalAdded);
 }
 
 function updateStats() {
@@ -57,6 +31,45 @@ function updateStats() {
   document.getElementById("totalAdded").textContent = totalAdded;
 }
 
+function saveToLocalStorage() {
+  localStorage.setItem("balance", balance);
+  localStorage.setItem("totalSpins", totalSpins);
+  localStorage.setItem("totalWins", totalWins);
+  localStorage.setItem("highestWin", highestWin);
+  localStorage.setItem("lastBet", document.getElementById("betInput").value);
+  localStorage.setItem("totalAdded", totalAdded);
+  localStorage.setItem("soundEnabled", soundEnabled);
+}
+
+// Funkcje dźwiękowe
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem("soundEnabled", soundEnabled);
+  updateSoundButton();
+}
+
+function updateSoundButton() {
+  const soundButton = document.getElementById("soundButton");
+  if (soundEnabled) {
+    soundButton.innerHTML = '<i class="fas fa-volume-up"></i> Dźwięk';
+    soundButton.classList.remove("sound-off");
+    soundButton.classList.add("sound-on");
+  } else {
+    soundButton.innerHTML = '<i class="fas fa-volume-mute"></i> Dźwięk';
+    soundButton.classList.remove("sound-on");
+    soundButton.classList.add("sound-off");
+  }
+}
+
+function playSound(sound, volume = 0.5) {
+  if (soundEnabled && sound) {
+    sound.currentTime = 0;
+    sound.volume = volume;
+    sound.play().catch(e => console.log("Autoplay blocked:", e));
+  }
+}
+
+// Funkcje gry
 function startSpin() {
   const bet = parseInt(document.getElementById("betInput").value);
   if (isNaN(bet) || bet <= 0) {
@@ -68,6 +81,7 @@ function startSpin() {
     return;
   }
 
+  // Rozpoczęcie gry
   balance -= bet;
   updateBalanceDisplay();
   document.getElementById("spinButton").disabled = true;
@@ -77,10 +91,15 @@ function startSpin() {
   saveToLocalStorage();
   updateStats();
 
+  // Odtwórz dźwięk kręcenia
+  playSound(spinSound, 0.3);
+
+  // Symbole i ich wagi
   const symbols = ["🍒", "🍋", "🍉", "🔔", "💎", "7️⃣", "🍀", "⭐"];
   const weights = [30, 25, 20, 15, 5, 3, 1, 1];
   const symbolPool = weights.flatMap((weight, index) => Array(weight).fill(symbols[index]));
 
+  // Animacja kręcenia
   const slots = document.querySelectorAll('.slot');
   slots.forEach(slot => slot.classList.add('spinning'));
 
@@ -113,18 +132,29 @@ function finalizeSpin(bet, symbolPool) {
   const resultDiv = document.getElementById("result");
   const specialBonus = { "7️⃣": 2, "🍀": 2.5, "⭐": 3, "💎": 1.5 };
 
+  // Sprawdź wynik
   if (finalSymbols.every(symbol => symbol === finalSymbols[0])) {
+    // Wygrana - wszystkie symbole takie same
     let winAmount = bet * winMultiplier * (specialBonus[finalSymbols[0]] || 1);
-    resultDiv.textContent = specialBonus[finalSymbols[0]]
-      ? `SUPER! Wygrałeś ${winAmount} 💰 (${specialBonus[finalSymbols[0]]}x bonus)`
-      : `JACKPOT! Wygrałeś ${winAmount} 💰`;
+    
+    // Odtwórz odpowiedni dźwięk
+    if (specialBonus[finalSymbols[0]]) {
+      playSound(winSound, 0.5);
+      resultDiv.textContent = `SUPER! Wygrałeś ${winAmount} 💰 (${specialBonus[finalSymbols[0]]}x bonus)`;
+    } else {
+      playSound(jackpotSound, 0.5);
+      resultDiv.textContent = `JACKPOT! Wygrałeś ${winAmount} 💰`;
+    }
+    
     resultDiv.className = "result win";
     balance += winAmount;
     totalWins++;
     highestWin = Math.max(highestWin, winAmount);
     slots.forEach(slot => slot.classList.add('winning-slot'));
   } else if (new Set(finalSymbols).size < 3) {
+    // Częściowa wygrana - dwa takie same symbole
     const winAmount = Math.round(bet * 0.5);
+    playSound(winSound, 0.3);
     resultDiv.textContent = `Dwa pasujące symbole! Odzyskujesz ${winAmount} 💰`;
     resultDiv.className = "result win";
     balance += winAmount;
@@ -136,30 +166,32 @@ function finalizeSpin(bet, symbolPool) {
       }
     });
   } else {
+    // Przegrana
     resultDiv.textContent = "Niestety, spróbuj jeszcze raz! 😕";
     resultDiv.className = "result lose";
     slots.forEach(slot => slot.classList.add('losing-slot'));
   }
 
+  // Zakończenie gry
   updateBalanceDisplay();
   updateStats();
   saveToLocalStorage();
   document.getElementById("spinButton").disabled = false;
 }
+
 function resetStats() {
-    if (confirm("Czy na pewno chcesz zresetować statystyki i balans?")) {
-        balance = 0;
-        totalSpins = 0;
-        totalWins = 0;
-        highestWin = 0;
-        totalAdded = 0;
-        saveToLocalStorage();
-        updateBalanceDisplay();
-        updateStats();
-    }
+  if (confirm("Czy na pewno chcesz zresetować statystyki i balans?")) {
+    balance = 1000;
+    totalSpins = 0;
+    totalWins = 0;
+    highestWin = 0;
+    totalAdded = 0;
+    document.getElementById("betInput").value = 100;
+    saveToLocalStorage();
+    updateBalanceDisplay();
+    updateStats();
+  }
 }
 
+// Nasłuchiwanie zdarzeń
 document.getElementById("resetButton").addEventListener("click", resetStats);
-
-updateBalanceDisplay();
-updateStats();

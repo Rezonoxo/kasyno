@@ -392,3 +392,27 @@ input[type="number"]::-webkit-inner-spin-button {
   scrollbar-width: thin;
   scrollbar-color: #006a35 #1e1e1e;
 }
+/* Dodaj do swojego pliku slots.css */
+#soundButton {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#soundButton.sound-on {
+  background-color: #4CAF50;
+}
+
+#soundButton.sound-off {
+  background-color: #f44336;
+}
+
+/* Ukryj domyślnie elementy audio */
+audio {
+  display: none;
+}

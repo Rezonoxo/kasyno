@@ -6,6 +6,10 @@
   <title>Kosierb's Casino - Jednoręki Bandyta</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style/slots.css" />
+  <!--DŹWIĘKI SLOTÓW GAMBLING-->
+  <audio id="spinSound" src="dzwieki/spin.mp3" preload="auto"></audio>
+  <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
+  <audio id="jackpotSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
 </head>
 <body>
   <!-- Navbar -->
@@ -16,10 +20,12 @@
       <span class="amount" id="balance">1000</span>
       <span class="currency">💰</span>
     </div>
+    <button id="soundButton" onclick="toggleSound()">
+      <i class="fas fa-volume-up"></i> Dźwięk
+    </button>
     <button id="resetButton" onclick="resetGame()">
         <i class="fas fa-redo"></i> Reset
     </button>
-    
   </div>
 
   <div class="container">
