@@ -1,4 +1,4 @@
-let balance = parseInt(localStorage.getItem("balance")) || 1000;
+let balance = parseInt(localStorage.getItem("balance")) || 0;
 const winMultiplier = 10;
 let totalSpins = parseInt(localStorage.getItem("totalSpins")) || 0;
 let totalWins = parseInt(localStorage.getItem("totalWins")) || 0;

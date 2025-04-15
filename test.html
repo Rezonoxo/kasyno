@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strefa Rozrywki Kosierb</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/test.css"/>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Kosierb Casino</div>
+      <div class="subtitle">Profesjonalna platforma rozrywkowa ,,bo gambliing to przyszłość"</div>
+    </header>
+
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-wallet"></i> Stan konta</h2>
+      <div class="balance-value"><span id="balance">0</span> PLN</div>
+      
+      <div class="balance-controls">
+        <div class="input-group">
+          <input type="number" id="adjustValue" value="100" min="0" placeholder="Wprowadź kwotę">
+          <button style="margin-left: 20px;" class="btn-primary" onclick="adjustBalance()"><i class="fas fa-plus"></i> Dodaj</button>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn-success btn-sm" onclick="addQuickBalance(50)"><i class="fas fa-coins"></i> +50</button>
+        <button class="btn-success btn-sm" onclick="addQuickBalance(100)"><i class="fas fa-coins"></i> +100</button>
+        <button class="btn-danger btn-sm" onclick="subtractQuickBalance(50)"><i class="fas fa-minus"></i> -50</button>
+        <button class="btn-danger btn-sm" onclick="subtractQuickBalance(100)"><i class="fas fa-minus"></i> -100</button>
+        <button class="btn-warning btn-sm" onclick="resetBalance()"><i class="fas fa-sync-alt"></i> Resetuj</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <div class="stat-label">Łącznie dodano</div>
+        <div class="stat-value"><span id="totalAdded">0</span> PLN</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Łącznie odjęto</div>
+        <div class="stat-value"><span id="totalSubtracted">0</span> PLN</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Liczba operacji</div>
+        <div class="stat-value"><span id="totalActions">0</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-history"></i> Historia transakcji</h2>
+      <div class="transaction-log" id="transactions">
+        <button style="margin-top: 20px; margin-bottom: 20px;" class="btn-danger btn-sm" onclick="clearTransactions()"><i class="fas fa-trash-alt"></i> Wyczyść historię</button>
+        <div class="transaction-item transaction-neutral">
+          <span>Witaj w Strefie Rozrywki!</span>
+          <small>Dziś</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-gamepad"></i> Gry i Rozrywka</h2>
+      <div class="games-grid">
+        <div class="game-card">
+            <div class="game-image" style="background-image: url('https://source.unsplash.com/600x400/?casino,roulette')"></div>
+            <h3 class="game-title">Jednoręki Bandyta</h3>
+            <p class="game-description">Jednoręki bandyta to gra kasynowa online z obracającymi się bębnami. Trafiasz symbole, by wygrać nagrody!</p>
+            <a href="/slots.html"><button class="btn-primary"><i class="fas fa-play"></i> Graj</button></a>
+        </div>
+        <div class="game-card">
+            <div class="game-image" style="background-image: url('https://source.unsplash.com/600x400/?cards,poker')"></div>
+            <h3 class="game-title">Pachinko</h3>
+            <p class="game-description">Pachinko to japońska gra kasynowa, w której kulka spada przez labirynt pinów. Gracz obserwuje jej losowe odbicia i liczy na trafienie do wartościowego slotu z wysokim mnożnikiem!</p>
+            <a href="/pachinko.html"><button class="btn-primary"><i class="fas fa-play"></i> Graj</button></a>
+        </div>
+        <div class="game-card">
+            <div class="game-image" style="background-image: url('https://source.unsplash.com/600x400/?slot,machine')"></div>
+            <h3 class="game-title">Saper</h3>
+            <p class="game-description">Saper bądź "mines" to gra, w której odkrywasz pola na planszy, unikając ukrytych min. Im więcej zaryzykujesz możesz zyskać więcej!</p>
+            <a href="/saper.html"><button class="btn-primary"><i class="fas fa-play"></i> Graj</button></a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 Kosierb Casino. Wszelkie prawa zastrzeżone.</p>
+      <br>
+      <p>Graj odpowiedzialnie, 99% osób odpuszcza przed wielką wygraną.</p>
+    </footer>
+  </div>
+
+  <div class="notification" id="notification">
+    Operacja wykonana pomyślnie!
+  </div>
+
+  <script>
+    let balance = parseInt(localStorage.getItem("balance")) || 0;
+    let totalAdded = parseInt(localStorage.getItem("totalAdded")) || 0;
+    let totalSubtracted = parseInt(localStorage.getItem("totalSubtracted")) || 0;
+    let totalActions = parseInt(localStorage.getItem("totalActions")) || 0;
+
+    const balanceDisplay = document.getElementById("balance");
+    const addedDisplay = document.getElementById("totalAdded");
+    const subtractedDisplay = document.getElementById("totalSubtracted");
+    const actionsDisplay = document.getElementById("totalActions");
+    const transactionLog = document.getElementById("transactions");
+    const notification = document.getElementById("notification");
+
+    function saveToLocalStorage() {
+      localStorage.setItem("balance", balance);
+      localStorage.setItem("totalAdded", totalAdded);
+      localStorage.setItem("totalSubtracted", totalSubtracted);
+      localStorage.setItem("totalActions", totalActions);
+    }
+
+    function showNotification(message) {
+      notification.textContent = message;
+      notification.classList.add("show");
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000);
+    }
+
+    function addTransaction(type, amount, message) {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      const dateString = now.toLocaleDateString();
+
+      const transactionItem = document.createElement("div");
+      transactionItem.className = `transaction-item transaction-${type} fade-in`;
+
+      transactionItem.innerHTML = `
+        <span>${message}</span>
+        <small>${timeString}, ${dateString}</small>
+      `;
+
+      transactionLog.insertBefore(transactionItem, transactionLog.firstChild);
+
+      if (transactionLog.children.length > 10) {
+        transactionLog.removeChild(transactionLog.lastChild);
+      }
+    }
+
+    function updateDisplays() {
+      balanceDisplay.textContent = balance;
+      addedDisplay.textContent = totalAdded;
+      subtractedDisplay.textContent = totalSubtracted;
+      actionsDisplay.textContent = totalActions;
+    }
+    loadTransactions();
+
+
+    function adjustBalance() {
+      const val = parseInt(document.getElementById("adjustValue").value);
+      if (!isNaN(val) && val > 0) {
+        balance += val;
+        totalAdded += val;
+        totalActions++;
+        addTransaction("positive", val, `Wpłata: +${val} PLN`);
+        saveTransactions();
+        updateDisplays();
+        saveToLocalStorage();
+        showNotification(`Dodano ${val} PLN do salda`);
+      } else {
+        showNotification("Wprowadź poprawną kwotę");
+      }
+    }
+
+    function addQuickBalance(val) {
+      balance += val;
+      totalAdded += val;
+      totalActions++;
+      addTransaction("positive", val, `Szybka wpłata: +${val} PLN`);
+      saveTransactions();
+      updateDisplays();
+      saveToLocalStorage();
+      showNotification(`Dodano ${val} PLN do salda`);
+    }
+
+    function subtractQuickBalance(val) {
+      if (balance >= val) {
+        balance -= val;
+        totalSubtracted += val;
+        totalActions++;
+        addTransaction("negative", val, `Wypłata: -${val} PLN`);
+        saveTransactions();
+        updateDisplays();
+        saveToLocalStorage();
+        showNotification(`Odjęto ${val} PLN od salda`);
+      } else {
+        showNotification("Niewystarczające środki");
+      }
+    }
+    function saveTransactions() {
+  const logs = Array.from(transactionLog.children).map(item => item.innerHTML);
+  localStorage.setItem("transactionLogs", JSON.stringify(logs));
+}
+
+function loadTransactions() {
+  const logs = JSON.parse(localStorage.getItem("transactionLogs") || "[]");
+  logs.forEach(html => {
+    const div = document.createElement("div");
+    div.className = "transaction-item fade-in"; // Klasa bez koloru (bo już w HTML)
+    div.innerHTML = html;
+    transactionLog.appendChild(div);
+  });
+}
+
+function clearTransactions() {
+  transactionLog.innerHTML = "";
+  localStorage.removeItem("transactionLogs");
+  showNotification("Historia transakcji wyczyszczona");
+}
+
+
+function resetBalance() {
+  balance = 0;
+  totalAdded = 0;
+  totalSubtracted = 0;
+  totalActions++;
+  addTransaction("neutral", 0, "Zresetowano saldo");
+  updateDisplays();
+  saveToLocalStorage();
+  saveTransactions();
+  showNotification("Saldo zostało zresetowane");
+}
+
+
+    updateDisplays();
+
+    document.getElementById("adjustValue").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        adjustBalance();
+      }
+    });
+  </script>
+</body>
+</html>
