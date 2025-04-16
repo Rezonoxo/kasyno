@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kosierb's Casino - Jednoręki Bandyta</title>
+  <title>Kosierb's Casino - Koło Fortuny</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style/slots.css" />
+  <link rel="stylesheet" href="style/fortuna.css" />
   <!-- DŹWIĘKI -->
   <audio id="spinSound" src="dzwieki/spin.mp3" preload="auto"></audio>
   <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
@@ -19,7 +19,8 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="logo">
-        <img src="/obrazy/logo.png" alt="Kosierb's Casino Logo" class="logo-img" />
+        <span>Kosierb's</span>
+        <span>Casino</span>
       </div>
       
       <div class="nav-links">
@@ -34,7 +35,7 @@
       <div class="nav-controls">
         <div class="balance">
           <span class="balance-label">Saldo:</span>
-          <span class="balance-amount" id="balance">0</span>
+          <span class="balance-amount" id="balance">1,000.00</span>
           <span class="balance-currency">PLN</span>
         </div>
         
@@ -62,8 +63,8 @@
 
   <div class="container">
     <header class="game-header">
-      <h1><i class="fas fa-slot-machine"></i> Jednoręki Bandyta</h1>
-      <p class="game-subtitle">Zakręć i wygraj fortunę!</p>
+      <h1><i class="fas fa-wheel"></i> Koło Fortuny</h1>
+      <p class="game-subtitle">Zakręć i wygraj wielką wygraną!</p>
     </header>
     
     <div class="game-controls">
@@ -71,38 +72,37 @@
         <div class="bet-amount">
           <label for="betInput" class="control-label">Stawka (PLN)</label>
           <div class="input-group">
-            <button class="bet-step" onclick="changeBet(-50)">-50</button>
-            <input id="betInput" type="number" value="100" min="10" step="10" />
-            <button class="bet-step" onclick="changeBet(50)">+50</button>
+            <button class="bet-step" onclick="changeBet(-10)">-10</button>
+            <input id="betInput" type="number" value="50" min="10" step="10" />
+            <button class="bet-step" onclick="changeBet(10)">+10</button>
           </div>
         </div>
         
         <div class="multiplier-display">
-          <span class="multiplier-label">Mnożnik:</span>
-          <span class="multiplier-value" id="multiplierValue">10</span>x
+          <span class="multiplier-label">Maks. wygrana:</span>
+          <span class="multiplier-value" id="multiplierValue">2,000 PLN</span>
         </div>
       </div>
       
       <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet(10)">10</button>
+        <button class="quick-bet" onclick="setBet(20)">20</button>
         <button class="quick-bet" onclick="setBet(50)">50</button>
         <button class="quick-bet" onclick="setBet(100)">100</button>
-        <button class="quick-bet" onclick="setBet(500)">500</button>
-        <button class="quick-bet" onclick="setBet(1000)">1000</button>
       </div>
     </div>
 
     <div class="game-area">
-      <div class="slots-container">
-        <div class="slots">
-          <div class="slot" id="slot1">🍒</div>
-          <div class="slot" id="slot2">🍒</div>
-          <div class="slot" id="slot3">🍒</div>
+      <div class="wheel-container">
+        <div class="wheel" id="wheel">
+          <!-- Sekcje koła generowane przez JS -->
         </div>
-        <div class="payline"></div>
+        <div class="wheel-center"></div>
+        <div class="wheel-pointer"></div>
       </div>
       
       <button id="spinButton" class="spin-btn">
-        <span class="spin-icon"><i class="fas fa-dice"></i></span>
+        <span class="spin-icon"><i class="fas fa-redo"></i></span>
         <span class="spin-text">ZAKRĘĆ!</span>
       </button>
       
@@ -147,10 +147,6 @@
         </div>
       </div>
     </div>
-    
-    <div class="game-info">
-      <button class="info-btn active"><i class="fas fa-info-circle"></i> Informacje</button>
-    </div>
   </div>
 
   <footer class="game-footer">
@@ -168,22 +164,6 @@
     </div>
   </footer>
 
-  <!-- Modal pomocy -->
-  <div class="modal" id="helpModal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2><i class="fas fa-question-circle"></i> Pomoc</h2>
-      <div class="modal-body">
-        <h3>Jak grać?</h3>
-        <p>1. Ustaw stawkę za pomocą przycisków lub wpisując wartość</p>
-        <p>2. Kliknij "ZAKRĘĆ!" aby rozpocząć grę</p>
-        <p>3. Jeśli symbole się zgadzają - wygrywasz!</p>
-        <h3>Pamiętaj!</h3>
-        <p>99% graczy odpuszcza przed wielką wygraną</p>
-      </div>
-    </div>
-  </div>
-
-  <script src="skrypty/slots.js"></script>
+  <script src="skrypty/fortuna.js"></script>
 </body>
 </html>

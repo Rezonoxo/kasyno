@@ -1,5 +1,5 @@
 // Zmienne stanu gry
-let balance = parseInt(localStorage.getItem("balance")) || 1000;
+let balance = parseInt(localStorage.getItem("balance")) || 0;
 const winMultiplier = 10;
 let totalSpins = parseInt(localStorage.getItem("totalSpins")) || 0;
 let totalWins = parseInt(localStorage.getItem("totalWins")) || 0;
@@ -18,6 +18,17 @@ document.getElementById("betInput").value = lastBet;
 updateBalanceDisplay();
 updateStats();
 updateSoundButton();
+
+// Powiązanie przycisku spin
+document.getElementById("spinButton").addEventListener("click", startSpin);
+// Powiązanie modalu pomocy
+document.getElementById("helpButton").addEventListener("click", openHelpModal);
+document.querySelector(".close-modal").addEventListener("click", closeHelpModal);
+window.addEventListener("click", function(e) {
+  if (e.target === document.getElementById("helpModal")) {
+    closeHelpModal();
+  }
+});
 
 // Funkcje pomocnicze
 function updateBalanceDisplay() {
@@ -111,7 +122,6 @@ function startSpin() {
     slots.forEach(slot => {
       slot.textContent = symbolPool[Math.floor(Math.random() * symbolPool.length)];
     });
-
     elapsed += interval;
     if (elapsed >= spinTime) {
       clearInterval(spinInterval);
@@ -125,8 +135,7 @@ function finalizeSpin(bet, symbolPool) {
   const finalSymbols = Array.from(slots).map(() => symbolPool[Math.floor(Math.random() * symbolPool.length)]);
   slots.forEach((slot, index) => {
     slot.textContent = finalSymbols[index];
-    slot.classList.remove('spinning');
-    slot.classList.remove('winning-slot', 'losing-slot');
+    slot.classList.remove('spinning', 'winning-slot', 'losing-slot');
   });
 
   const resultDiv = document.getElementById("result");
@@ -136,8 +145,7 @@ function finalizeSpin(bet, symbolPool) {
   if (finalSymbols.every(symbol => symbol === finalSymbols[0])) {
     // Wygrana - wszystkie symbole takie same
     let winAmount = bet * winMultiplier * (specialBonus[finalSymbols[0]] || 1);
-    
-    // Odtwórz odpowiedni dźwięk
+
     if (specialBonus[finalSymbols[0]]) {
       playSound(winSound, 0.5);
       resultDiv.textContent = `SUPER! Wygrałeś ${winAmount} 💰 (${specialBonus[finalSymbols[0]]}x bonus)`;
@@ -145,14 +153,14 @@ function finalizeSpin(bet, symbolPool) {
       playSound(jackpotSound, 0.5);
       resultDiv.textContent = `JACKPOT! Wygrałeś ${winAmount} 💰`;
     }
-    
+
     resultDiv.className = "result win";
     balance += winAmount;
     totalWins++;
     highestWin = Math.max(highestWin, winAmount);
     slots.forEach(slot => slot.classList.add('winning-slot'));
   } else if (new Set(finalSymbols).size < 3) {
-    // Częściowa wygrana - dwa takie same symbole
+    // Częściowa wygrana - dwa pasujące symbole
     const winAmount = Math.round(bet * 0.5);
     playSound(winSound, 0.3);
     resultDiv.textContent = `Dwa pasujące symbole! Odzyskujesz ${winAmount} 💰`;
@@ -179,9 +187,25 @@ function finalizeSpin(bet, symbolPool) {
   document.getElementById("spinButton").disabled = false;
 }
 
+// Funkcje zmiany stawki
+function changeBet(amount) {
+  const betInput = document.getElementById("betInput");
+  let currentBet = parseInt(betInput.value);
+  currentBet += amount;
+  if (currentBet < parseInt(betInput.min)) {
+    currentBet = parseInt(betInput.min);
+  }
+  betInput.value = currentBet;
+}
+
+function setBet(value) {
+  document.getElementById("betInput").value = value;
+}
+
+// Funkcja resetująca statystyki i balans
 function resetStats() {
   if (confirm("Czy na pewno chcesz zresetować statystyki i balans?")) {
-    balance = 1000;
+    balance = 0;
     totalSpins = 0;
     totalWins = 0;
     highestWin = 0;
@@ -192,6 +216,22 @@ function resetStats() {
     updateStats();
   }
 }
+// Alias aby działało z HTML (onclick="resetGame()")
+function resetGame() {
+  resetStats();
+}
 
-// Nasłuchiwanie zdarzeń
-document.getElementById("resetButton").addEventListener("click", resetStats);
+// Obsługa modalu pomocy
+function openHelpModal() {
+  document.getElementById("helpModal").style.display = "block";
+}
+
+function closeHelpModal() {
+  document.getElementById("helpModal").style.display = "none";
+}
+const mobileBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+mobileBtn.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+});

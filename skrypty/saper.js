@@ -74,7 +74,7 @@ function adjustBalance() {
 function updateMultiplier() {
   const bombs = parseInt(bombsInput.value) || 5;
   // Zmniejszony bazowy mnożnik dla mniejszej liczby bomb
-  const baseMultiplier = 1 + (bombs * 0.1) + (Math.pow(bombs, 1.1) * 0.003);
+  const baseMultiplier = 0.1 + (bombs * 0.2) + (Math.pow(bombs, 1.1) * 0.003);
   multiplierValue.textContent = baseMultiplier.toFixed(2);
 }
 
@@ -206,32 +206,27 @@ function showCellMultiplierPreview(cell) {
 }
 
 function calculateMultiplierIncrement() {
-  // Logarytmiczna progresja mnożnika - bardziej wartościowa na początku, wolniejsza na końcu
   const totalSafeCells = 25 - bombsCount;
   const remainingSafeCells = totalSafeCells - revealedCells;
   
   if (remainingSafeCells <= 0) return 0;
+
+  // Mniejsza baza dla niskiego ryzyka, ale wyższa przyrosty dla większej liczby odkrytych pól
+  let baseIncrement = 0.02 + (bombsCount * 0.005);
   
-  // Mniejsza baza dla niskiego ryzyka
-  let baseIncrement = 0.01 + (bombsCount * 0.005);
+  // Czynnik ryzyka - im mniej bezpiecznych pól, tym większy przyrost
+  const riskFactor = Math.pow((totalSafeCells - remainingSafeCells + 1) / totalSafeCells, 1.2);
   
-  // Czynnik ryzyka - im mniej bezpiecznych pól pozostało, tym większy przyrost
-  const riskFactor = Math.pow((totalSafeCells - remainingSafeCells + 1) / totalSafeCells, 0.7);
-  
-  // Czynnik trudności - im więcej bomb, tym większy przyrost
-  const difficultyFactor = Math.pow(bombsCount / 24, 0.7);
-  
-  // Czynnik progresji - zwiększa przyrost, gdy gracz odkrywa więcej pól
+  // Zwiększony przyrost w zależności od liczby odkrytych pól
   const progressionFactor = 1 + (revealedCells / totalSafeCells);
   
-  // Im mniej bezpiecznych pól zostało, tym większa szansa na trafienie bomby
-  const bombChanceFactor = Math.pow(bombsCount / remainingSafeCells, 0.5);
+  // Im mniej bezpiecznych pól zostało, tym większa szansa na bombę
+  const bombChanceFactor = Math.pow(bombsCount / remainingSafeCells, 0.7);
   
   // Finalny przyrost mnożnika
-  const increment = baseIncrement * (1 + riskFactor) * (1 + difficultyFactor) * progressionFactor * (1 + bombChanceFactor);
+  const increment = baseIncrement * (1 + riskFactor) * (1 + progressionFactor) * (1 + bombChanceFactor);
   
-  // Ograniczenie maksymalnego przyrostu dla balansu
-  return Math.min(increment, 2.0);
+  return Math.min(increment, 3.0); // Ograniczamy przyrost, by uniknąć zbyt dużych mnożników
 }
 
 // Aktualizacja wyświetlania potencjalnego mnożnika za następne kliknięcie
@@ -245,23 +240,23 @@ function updateNextMultiplierDisplay() {
   nextMultiplierDiv.style.display = "block";
   nextMultiplierDiv.innerHTML = `Następne kliknięcie: <span class="multiplier-highlight">+${increment.toFixed(2)}x</span> <span class="potential-win">(${Math.round(currentBet * (multiplier + increment))}zł)</span>`;
   
-  // Dodajemy wizualne podkreślenie opłacalności następnego kliknięcia
-  const potentialNextWin = currentBet * (multiplier + increment);
-  const currentWin = currentBet * multiplier;
-  const gainPercentage = ((potentialNextWin - currentWin) / currentWin) * 100;
-  
-  // Dodajemy klasę bazującą na opłacalności
-  if (gainPercentage > 15) {
-    nextMultiplierDiv.classList.add("high-gain");
-    nextMultiplierDiv.classList.remove("medium-gain", "low-gain");
-  } else if (gainPercentage > 8) {
-    nextMultiplierDiv.classList.add("medium-gain");
-    nextMultiplierDiv.classList.remove("high-gain", "low-gain");
-  } else {
-    nextMultiplierDiv.classList.add("low-gain");
-    nextMultiplierDiv.classList.remove("high-gain", "medium-gain");
-  }
-}
+   // Dodajemy wizualne podkreślenie opłacalności następnego kliknięcia
+   const potentialNextWin = currentBet * (multiplier + increment);
+   const currentWin = currentBet * multiplier;
+   const gainPercentage = ((potentialNextWin - currentWin) / currentWin) * 100;
+ 
+   // Zmiana kolorów w zależności od opłacalności
+   if (gainPercentage > 20) {
+     nextMultiplierDiv.classList.add("high-gain");
+     nextMultiplierDiv.classList.remove("medium-gain", "low-gain");
+   } else if (gainPercentage > 10) {
+     nextMultiplierDiv.classList.add("medium-gain");
+     nextMultiplierDiv.classList.remove("high-gain", "low-gain");
+   } else {
+     nextMultiplierDiv.classList.add("low-gain");
+     nextMultiplierDiv.classList.remove("high-gain", "medium-gain");
+   }
+ }
 
 function placeBombs() {
   bombPositions = [];
@@ -349,11 +344,11 @@ function animateMultiplier(from, to) {
   requestAnimationFrame(update);
 }
 
-// Wyświetlanie informacji o przyroście mnożnika
+// Informacja o opłacalności
 function showMultiplierIncrease(increment) {
   const notification = document.createElement("div");
   notification.className = "multiplier-notification";
-  notification.textContent = `+${increment.toFixed(2)}x`;
+  notification.textContent = `+${increment.toFixed(2)}x! Rośnie ryzyko, ale i nagrody!`;
   document.body.appendChild(notification);
   
   setTimeout(() => {
