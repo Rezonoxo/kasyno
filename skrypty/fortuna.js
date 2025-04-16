@@ -290,4 +290,12 @@ const config = {
   }
   
   window.onload = initGame;
+  function closeHelpModal() {
+    document.getElementById("helpModal").style.display = "none";
+  }
+  const mobileBtn = document.querySelector('.mobile-menu-btn');
+  const navLinks = document.querySelector('.nav-links');
   
+  mobileBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+  });

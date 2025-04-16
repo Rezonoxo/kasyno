@@ -5,80 +5,197 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kosierb's Casino - Pachinko</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/pachinko.css" />
+  <!-- DŹWIĘKI -->
+  <audio id="dropSound" src="dzwieki/drop.mp3" preload="auto"></audio>
+  <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
+  <audio id="jackpotSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
 </head>
 <body>
   <!-- Navbar -->
-  <div class="navbar">
-    <div class="logo">Kasyno</div>
-    
-    <div class="balance">
-        <span>Saldo:</span>
-        <span class="amount" id="balance">1000</span>
-        <span class="currency">💰</span>
-    </div>
-    
-    <button id="resetButton" onclick="resetGame()">
-        <i class="fas fa-redo"></i> Reset
-    </button>
-    
-    <!-- Dodany odnośnik -->
-    <a href="test.html" class="test-link">Przejdź do test.html</a>
-</div>
-
-
-  <div class="container">
-    <h1 style="margin-top: 20px;">Pachinko</h1>
-  <div class="controls">
-    <!-- Ustawienia stawki i mnożnika -->
-    <div class="bet-setting">
-      <label>Stawka: 
-        <input id="betInput" type="number" value="100" min="1" />
-      </label>
-      <div class="multiplier">
-        <span>Mnożnik:</span>
-        <span id="multiplierValue">10</span>x
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <span>Kosierb's</span>
+        <span>Casino</span>
       </div>
-      <div id="adjustForm">
-        <input type="number" id="adjustValue" placeholder="Kwota" value="100" />
-        <button onclick="adjustBalance()">
-          <i class="fas fa-plus-minus"></i> Zmień saldo
-        </button>
-        <div class="result" id="result"></div>
+      
+      <div class="nav-links">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Strona Główna</a>
+        <a href="slots.html" class="nav-link"><i class="fas fa-slot-machine"></i> Jednoręki Bandyta</a>
+        <a href="wheel.html" class="nav-link"><i class="fas fa-wheel"></i> Koło Fortuny</a>
+        <a href="pachinko.html" class="nav-link active"><i class="fas fa-arrow-down"></i> Pachinko</a>
+        <a href="game4.html" class="nav-link"><i class="fas fa-roulette"></i> Gra 4</a>
+        <a href="game5.html" class="nav-link"><i class="fas fa-poker"></i> Gra 5</a>
       </div>
-    </div>
-        <!-- Gra -->
-        <div class="game-area">
-            <div class="patchinko-board" id="patchinkoBoard">
-              <!-- Kule i ścieżki spadających piłek będą tworzone dynamicznie -->
-            </div>
-            <p style="text-align: center; font-weight: bold; font-size: 1.2rem; color: #fff; background: linear-gradient(90deg, red, orange, limegreen, orange, red); padding: 10px; border-radius: 10px; font-family: 'Arial', sans-serif; letter-spacing: 2px; text-shadow: 0 0 5px #000;">x0  |  x0.5  |  x1  |  x4  |  x1  |  x0.5  |  x0</p>
-            <button id="dropBallButton" onclick="dropBall()">
-              <i class="fas fa-fade fa-arrow-down"></i> Rzuć kulką! 🔴
+      
+      <div class="nav-controls">
+        <div class="balance">
+          <span class="balance-label">Saldo:</span>
+          <span class="balance-amount" id="balance">1,000.00</span>
+          <span class="balance-currency">PLN</span>
+        </div>
+        
+        <div class="dropdown">
+          <button class="dropdown-btn"><i class="fas fa-cog"></i> Opcje</button>
+          <div class="dropdown-content">
+            <button id="soundButton" onclick="toggleSound()">
+              <i class="fas fa-volume-up"></i> Dźwięk: WŁ
+            </button>
+            <button id="resetButton" onclick="resetGame()">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+            <button id="helpButton">
+              <i class="fas fa-question-circle"></i> Pomoc
             </button>
           </div>
-      
-          <!-- Statystyki -->
         </div>
-        <div class="stats">
-          <div class="stat-item">
+      </div>
+      
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="game-header">
+      <h1><i class="fas fa-arrow-down"></i> Pachinko</h1>
+      <p class="game-subtitle">Rzuć kulką i wygraj fortunę!</p>
+    </header>
+    
+    <div class="game-controls">
+      <div class="bet-controls">
+        <div class="bet-amount">
+          <label for="betInput" class="control-label">Stawka (PLN)</label>
+          <div class="input-group">
+            <button class="bet-step" onclick="changeBet(-10)">-10</button>
+            <input id="betInput" type="number" value="50" min="10" step="10" />
+            <button class="bet-step" onclick="changeBet(10)">+10</button>
+          </div>
+        </div>
+        
+        <div class="multiplier-display">
+          <span class="multiplier-label">Maks. wygrana:</span>
+          <span class="multiplier-value" id="multiplierValue">200 PLN</span>
+        </div>
+      </div>
+      
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet(10)">10</button>
+        <button class="quick-bet" onclick="setBet(20)">20</button>
+        <button class="quick-bet" onclick="setBet(50)">50</button>
+        <button class="quick-bet" onclick="setBet(100)">100</button>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="pachinko-board" id="pachinkoBoard">
+        <!-- Piny i sloty generowane przez JS -->
+      </div>
+      
+      <div class="slots-display">
+        <div class="slot-info" data-slot="0">❌ 0x</div>
+        <div class="slot-info" data-slot="1">0.5x</div>
+        <div class="slot-info" data-slot="2">1x</div>
+        <div class="slot-info highlight-slot" data-slot="3">4x</div>
+        <div class="slot-info" data-slot="4">1x</div>
+        <div class="slot-info" data-slot="5">0.5x</div>
+        <div class="slot-info" data-slot="6">❌ 0x</div>
+      </div>
+      
+      <button id="dropButton" class="spin-btn">
+        <span class="spin-icon"><i class="fas fa-arrow-down"></i></span>
+        <span class="spin-text">RZUĆ KULKĄ!</span>
+      </button>
+      
+      <div class="result-container">
+        <div class="result" id="result"></div>
+        <div class="last-win" id="lastWin"></div>
+      </div>
+    </div>
+
+    <div class="game-stats">
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+          <div class="stat-info">
             <div class="stat-label">Rzuty</div>
             <div class="stat-value" id="totalDrops">0</div>
           </div>
-          <div class="stat-item">
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info">
             <div class="stat-label">Wygrane</div>
             <div class="stat-value" id="totalWins">0</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-label">Największa wygrana</div>
-            <div class="stat-value" id="highestWin">0</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-label">Dodane pieniądze</div>
-            <div class="stat-value" id="totalAdded">0</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-crown"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Najwyższa wygrana</div>
+            <div class="stat-value" id="highestWin">0 PLN</div>
           </div>
         </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-coins"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Dodane środki</div>
+            <div class="stat-value" id="totalAdded">0 PLN</div>
+          </div>
+        </div>
+      </div>
     </div>
-<script src="skrypty/patchinko.js"></script>
+  </div>
+
+  <footer class="game-footer">
+    <div class="footer-content">
+      <p>© 2023 Kosierb's Casino. Wszelkie prawa zastrzeżone.</p>
+      <div class="footer-links">
+        <a href="#">Regulamin</a>
+        <a href="#">Polityka prywatności</a>
+        <a href="#">Kontakt</a>
+      </div>
+    </div>
+    <div class="responsible-gambling">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Odpowiedzialna gra. Graj odpowiedzialnie.</span>
+    </div>
+  </footer>
+
+  <!-- Modal pomocy -->
+  <div class="modal" id="helpModal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2><i class="fas fa-question-circle"></i> Pomoc</h2>
+      <div class="modal-body">
+        <h3>Jak grać?</h3>
+        <p>1. Ustaw stawkę za pomocą przycisków lub wpisując wartość</p>
+        <p>2. Kliknij "RZUĆ KULKĄ!" aby rozpocząć grę</p>
+        <p>3. Kulka spadnie w jeden z slotów - wygrywasz zgodnie z mnożnikiem</p>
+        
+        <h3>Mnożniki wygranych</h3>
+        <div class="slots-preview">
+          <div class="slot-preview">❌ 0x</div>
+          <div class="slot-preview">0.5x</div>
+          <div class="slot-preview">1x</div>
+          <div class="slot-preview highlight">4x</div>
+          <div class="slot-preview">1x</div>
+          <div class="slot-preview">0.5x</div>
+          <div class="slot-preview">❌ 0x</div>
+        </div>
+        <p class="jackpot-info">Trafienie środkowego slotu (4x) daje największą wygraną!</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="skrypty/patchinko.js"></script>
 </body>
 </html>
