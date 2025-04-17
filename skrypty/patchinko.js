@@ -1,21 +1,21 @@
 // Konfiguracja gry
 const config = {
-  cols: 7, // Liczba kolumn slotów
-  multipliers: [0, 0.5, 1, 4, 1, 0.5, 0], // Mnożniki dla każdego slotu
+  cols: 7,
+  multipliers: [0, 0.5, 1.2, 5, 1.2, 0.5, 0],
   minBet: 10,
   startingBalance: 0,
-  ballDropSpeed: 16, // ms między klatkami animacji (60fps)
-  boardHeight: 400, // Wysokość planszy
-  boardWidth: 400, // Szerokość planszy
-  gravity: 0.25, // Siła grawitacji
-  friction: 0.99, // Współczynnik tarcia
-  randomFactor: 0.5, // Zwiększony współczynnik losowości ruchu
-  ballSize: 12, // Rozmiar kulki w pikselach
-  obstacles: 40, // Liczba przeszkód na planszy
-  obstacleSize: 8, // Rozmiar przeszkód
-  bounceEnergyLoss: 0.7, // Utrata energii przy odbiciu (niższa wartość = większa utrata)
-  turbulence: 0.15, // Współczynnik losowych zakłóceń ruchu
-  initialVelocityRandomness: 2.5 // Początkowa losowość prędkości
+  ballDropSpeed: 16,
+  boardHeight: 450,
+  boardWidth: 420, // dopasowana do slotów
+  gravity: 0.25, // mocniejsza, ale nie za mocna
+  friction: 0.98, // minimalne tarcie
+  randomFactor: 0.4, // mniejszy chaos
+  ballSize: 18, // lekko zmniejszona kulka
+  obstacles: 35, // nieco więcej przeszkód
+  obstacleSize: 10,
+  bounceEnergyLoss: 0.85, // bardziej sprężyste odbicia
+  turbulence: 0.12, // trochę drgań
+  initialVelocityRandomness: 2 // łagodniejsze startowe odchylenie
 };
 
 // Stan gry - ładowanie z localStorage
@@ -23,7 +23,6 @@ const state = {
   balance: parseInt(localStorage.getItem("balance")) || config.startingBalance,
   bet: parseInt(localStorage.getItem("lastBet")) || 50,
   isDropping: false,
-  soundEnabled: localStorage.getItem("pachinkoSoundEnabled") !== "false",
   obstacles: [], // Tablica przechowująca informacje o przeszkodach
   stats: {
     totalDrops: parseInt(localStorage.getItem("pachinkoTotalDrops")) || 0,
@@ -46,19 +45,10 @@ const elements = {
   highestWinDisplay: document.getElementById('highestWin'),
   totalAddedDisplay: document.getElementById('totalAdded'),
   multiplierDisplay: document.getElementById('multiplierValue'),
-  soundButton: document.getElementById('soundButton'),
   resetButton: document.getElementById('resetButton'),
   helpButton: document.getElementById('helpButton'),
   helpModal: document.getElementById('helpModal'),
   closeModal: document.querySelector('.close-modal')
-};
-
-// Dźwięki
-const sounds = {
-  drop: document.getElementById('dropSound'),
-  win: document.getElementById('winSound'),
-  jackpot: document.getElementById('jackpotSound'),
-  collision: document.getElementById('collisionSound') || { play: () => {} } // Opcjonalny dźwięk kolizji
 };
 
 // Inicjalizacja gry
@@ -67,7 +57,6 @@ function initGame() {
   generateObstacles();
   updateUI();
   setupEventListeners();
-  updateSoundButton();
 }
 
 // Tworzenie planszy Pachinko
@@ -102,14 +91,14 @@ function createBoard() {
 
 // Generowanie przeszkód na planszy
 function generateObstacles() {
-  state.obstacles = []; // Resetowanie istniejących przeszkód
+  state.obstacles = []; // Resetowanie istniejących przeszkod
   
   // Dodanie przeszkód w siatce
   const zoneHeight = config.boardHeight * 0.7; // Strefa z przeszkodami (70% planszy)
   const startY = config.boardHeight * 0.15; // Zaczynamy 15% od góry
   
   // Odstęp między przeszkodami
-  const spacingX = config.boardWidth / (Math.sqrt(config.obstacles) + 0.3);
+  const spacingX = config.boardWidth / (Math.sqrt(config.obstacles) + 0.0);
   const spacingY = zoneHeight / (Math.sqrt(config.obstacles) + 1);
   
   // Tworzymy przeszkody w układzie siatki z losowym rozrzutem
@@ -184,12 +173,6 @@ function dropBall() {
   saveToLocalStorage();
   updateUI();
   elements.dropButton.disabled = true;
-  
-  // Odtwórz dźwięk spadania kulki
-  if (state.soundEnabled) {
-    sounds.drop.currentTime = 0;
-    sounds.drop.play();
-  }
   
   // Utwórz kulkę
   const ball = document.createElement('div');
@@ -333,13 +316,6 @@ function dropBall() {
             obstacle.element.classList.remove('obstacle-hit');
           }, 100);
           
-          // Odtwórz dźwięk kolizji
-          if (state.soundEnabled && sounds.collision) {
-            sounds.collision.volume = 0.3;
-            sounds.collision.currentTime = 0;
-            sounds.collision.play();
-          }
-          
           break; // Obsługujemy tylko jedną kolizję na klatkę
         }
       }
@@ -374,10 +350,6 @@ function dropBall() {
         state.stats.totalWins++;
         state.stats.highestWin = Math.max(state.stats.highestWin, win);
         
-        if (state.soundEnabled) {
-          (multiplier >= 4 ? sounds.jackpot : sounds.win).play();
-        }
-        
         showResult(`🎉 Wygrałeś ${win} PLN!`, 'success');
         elements.lastWinDisplay.textContent = `Ostatnia wygrana: ${win} PLN`;
       } else {
@@ -408,7 +380,6 @@ function showResult(message, type = '') {
 function saveToLocalStorage() {
   localStorage.setItem("balance", state.balance);
   localStorage.setItem("lastBet", state.bet);
-  localStorage.setItem("pachinkoSoundEnabled", state.soundEnabled);
   localStorage.setItem("pachinkoTotalDrops", state.stats.totalDrops);
   localStorage.setItem("pachinkoTotalWins", state.stats.totalWins);
   localStorage.setItem("pachinkoHighestWin", state.stats.highestWin);
@@ -440,7 +411,6 @@ function setupEventListeners() {
   elements.helpButton.addEventListener('click', () => {
     elements.helpModal.style.display = 'block';
   });
-  elements.soundButton.addEventListener('click', toggleSound);
   elements.resetButton.addEventListener('click', resetGame);
   
   // Obsługa zmiany layoutu przeszkód
@@ -467,20 +437,6 @@ function setupEventListeners() {
       setBet(amount);
     });
   });
-}
-
-// Dźwięk ON/OFF
-function toggleSound() {
-  state.soundEnabled = !state.soundEnabled;
-  updateSoundButton();
-  saveToLocalStorage();
-}
-
-function updateSoundButton() {
-  elements.soundButton.innerHTML = `
-    <i class="fas ${state.soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'}"></i>
-    Dźwięk: ${state.soundEnabled ? 'WŁ' : 'WYŁ'}
-  `;
 }
 
 // Zmiana zakładu
@@ -653,12 +609,6 @@ function addStyles() {
 document.addEventListener('DOMContentLoaded', () => {
   initGame();
   addStyles();
-  
-  // Dodaj przycisk do regeneracji przeszkód
-  const regenerateBtn = document.createElement('button');
-  regenerateBtn.id = 'regenerateObstacles';
-  regenerateBtn.textContent = 'Losuj przeszkody';
-  elements.board.appendChild(regenerateBtn);
 });
 
 // Obsługa modalu pomocy
