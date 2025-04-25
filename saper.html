@@ -5,78 +5,157 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kosierb's Casino - Saper</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/saper.css" />
 </head>
 <body>
   <!-- Navbar -->
-  <div class="navbar">
-    <div class="logo">Kasyno</div>
-    <div class="balance">
-      <span>Saldo:</span>
-      <span class="amount" id="balance">1000</span>
-      <span class="currency">💰</span>
-    </div>
-    <button id="resetButton" onclick="resetGame()">
-        <i class="fas fa-redo"></i> Reset
-    </button>
-  </div>
-
-  <div class="container">
-    <h1>Saper</h1>
-    
-    <div class="controls">
-      <!-- Ustawienia stawki i bomb -->
-      <div class="bet-setting">
-        <label>Stawka: 
-          <input id="betInput" type="number" value="10" min="1" />
-        </label>
-        <label>Liczba bomb (1-24): 
-          <input id="bombsInput" type="number" value="5" min="1" max="24" />
-        </label>
-        <div class="multiplier">
-          <span>Mnożnik:</span>
-          <span id="multiplierValue">1.00</span>x
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <img src="/obrazy/logo.png" alt="Kosierb's Casino Logo" class="logo-img" />
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Strona Główna</a>
+        <a href="slots.html" class="nav-link"><i class="fa-solid fa-cash-register"></i> Jednoręki Bandyta</a>
+        <a href="saper.html" class="nav-link active"><i class="fa-solid fa-bomb"></i> Miny</a>
+        <a href="fortuna.html" class="nav-link"><i class="fa-solid fa-certificate"></i> Koło Fortuny</a>
+        <a href="pachinko.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Pachinko</a>
+        <a href="game5.html" class="nav-link"><i class="fas fa-poker"></i> Gra 5</a>
+      </div>
+      <div class="nav-controls">
+        <div class="balance">
+          <span class="balance-label">Saldo:</span>
+          <span class="balance-amount" id="balance">0</span>
+          <span class="balance-currency">PLN</span>
+        </div>
+        <div class="dropdown">
+          <button class="dropdown-btn"><i class="fas fa-cog"></i> Opcje</button>
+          <div class="dropdown-content">
+            <button id="resetButton" onclick="resetGame()">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+            <button id="helpButton">
+              <i class="fas fa-question-circle"></i> Pomoc
+            </button>
+          </div>
         </div>
       </div>
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
 
-      <!-- Przyciski kontrolne -->
-      <div class="game-controls">
-        <button id="startButton" onclick="startGame()">
+  <div class="container">
+    <header class="game-header">
+      <h1><i class="fa-solid fa-bomb"></i> Saper</h1>
+      <p class="game-subtitle">Odkrywaj pola, unikaj bomb i zgarniaj wygrane!</p>
+    </header>
+    <div class="game-controls">
+      <div class="bet-controls">
+        <div class="bet-amount">
+          <label for="betInput" class="control-label">Stawka (PLN)</label>
+          <div class="input-group">
+            <input id="betInput" type="number" value="10" min="1" step="1" />
+          </div>
+        </div>
+        <div class="bet-amount">
+          <label for="bombsInput" class="control-label">Liczba bomb (1-24)</label>
+          <div class="input-group">
+            <input id="bombsInput" type="number" value="5" min="1" max="24" step="1" />
+          </div>
+        </div>
+        <div class="multiplier-display">
+          <span class="multiplier-label">Mnożnik:</span>
+          <span class="multiplier-value" id="multiplierValue">1.00</span>x
+        </div>
+      </div>
+      <div class="action-buttons" style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
+        <button id="startButton" class="spin-btn" onclick="startGame()">
           <i class="fas fa-play"></i> Rozpocznij grę
         </button>
-        <button id="cashoutButton" onclick="cashOut()" disabled>
+        <button id="cashoutButton" class="spin-btn" onclick="cashOut()" disabled>
           <i class="fas fa-money-bill-wave"></i> Wypłać
         </button>
       </div>
     </div>
-
     <div class="game-area">
-      <!-- Plansza do gry -->
       <div id="board" class="board"></div>
-      <div class="result" id="result"></div>
+      <div class="result-container">
+        <div class="result" id="result"></div>
+      </div>
     </div>
-
-    <!-- Statystyki -->
-    <div class="stats">
-      <div class="stat-item">
-        <div class="stat-label">Rozegrane gry</div>
-        <div class="stat-value" id="totalGames">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Wygrane</div>
-        <div class="stat-value" id="totalWins">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Najwyższa wygrana</div>
-        <div class="stat-value" id="highestWin">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Dodane pieniądze</div>
-        <div class="stat-value" id="totalAdded">0</div>
+    <div class="game-stats">
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Rozegrane gry</div>
+            <div class="stat-value" id="totalGames">0</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Wygrane</div>
+            <div class="stat-value" id="totalWins">0</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-crown"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Najwyższa wygrana</div>
+            <div class="stat-value" id="highestWin">0 PLN</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-coins"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Dodane środki</div>
+            <div class="stat-value" id="totalAdded">0 PLN</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
+  <footer class="game-footer">
+    <div class="footer-content">
+      <p>© 2023 Kosierb's Casino. Wszelkie prawa zastrzeżone.</p>
+      <div class="footer-links">
+        <a href="#">Regulamin</a>
+        <a href="#">Polityka prywatności</a>
+        <a href="#">Kontakt</a>
+      </div>
+    </div>
+    <div class="responsible-gambling">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Odpowiedzialna gra. Graj odpowiedzialnie.</span>
+    </div>
+  </footer>
+  <!-- Modal pomocy -->
+  <div class="modal" id="helpModal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2><i class="fas fa-question-circle"></i> Pomoc</h2>
+      <div class="modal-body">
+        <h3>Jak grać?</h3>
+        <p>1. Ustaw stawkę i liczbę bomb</p>
+        <p>2. Kliknij "Rozpocznij grę" i odkrywaj pola</p>
+        <p>3. Unikaj bomb, wypłać wygraną w dowolnym momencie</p>
+        <h3>Mnożniki</h3>
+        <ul style="margin-left: 20px;">
+          <li>Każde odkryte pole zwiększa mnożnik</li>
+          <li>Im więcej bomb, tym wyższy potencjalny zysk</li>
+          <li>Wypłać zanim trafisz na bombę!</li>
+        </ul>
+        <h3>Pamiętaj!</h3>
+        <p>Im więcej ryzykujesz, tym większa nagroda, ale łatwo stracić wszystko!</p>
+      </div>
+    </div>
+  </div>
   <script src="skrypty/saper.js"></script>
 </body>
 </html>

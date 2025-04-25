@@ -25,6 +25,28 @@ const resultDiv = document.getElementById("result");
 const nextMultiplierDiv = document.createElement("div"); // Nowy element do wyświetlania potencjalnego przyrostu mnożnika
 const currentPayoutDiv = document.createElement("div"); // Nowy element do wyświetlania aktualnej kwoty do wypłaty
 
+// Obsługa modalu pomocy i menu mobilnego
+const helpBtn = document.getElementById("helpButton");
+const helpModal = document.getElementById("helpModal");
+const closeModalBtn = document.querySelector(".close-modal");
+const mobileBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+helpBtn?.addEventListener("click", () => {
+  helpModal.style.display = "block";
+});
+closeModalBtn?.addEventListener("click", () => {
+  helpModal.style.display = "none";
+});
+window.addEventListener("click", function(e) {
+  if (e.target === helpModal) {
+    helpModal.style.display = "none";
+  }
+});
+mobileBtn?.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+});
+
 // Inicjalizacja
 updateBalanceDisplay();
 updateStats();
@@ -71,11 +93,23 @@ function adjustBalance() {
   }
 }
 
+function calculateMultiplier(baseBombs, revealed) {
+  // Wzór: mnożnik = 1 / (szansa_1 * szansa_2 * ... * szansa_n)
+  // szansa_i = (safeCells - (i-1)) / (totalCells - (i-1))
+  const totalCells = 25;
+  const safeCells = totalCells - baseBombs;
+  let chance = 1;
+  for (let i = 0; i < revealed; i++) {
+    chance *= (safeCells - i) / (totalCells - i);
+  }
+  if (revealed === 0) return 1;
+  return 1 / chance;
+}
+
 function updateMultiplier() {
   const bombs = parseInt(bombsInput.value) || 5;
-  // Zmniejszony bazowy mnożnik dla mniejszej liczby bomb
-  const baseMultiplier = 0.1 + (bombs * 0.2) + (Math.pow(bombs, 1.1) * 0.003);
-  multiplierValue.textContent = baseMultiplier.toFixed(2);
+  // Startowy mnożnik = 1 (przed kliknięciem)
+  multiplierValue.textContent = "1.00";
 }
 
 // Aktualizacja wyświetlania aktualnej kwoty do wypłaty
@@ -125,21 +159,17 @@ function startGame() {
     return;
   }
 
-  // Ustalamy stawkę tylko raz
   currentBet = bet;
-  // Pobieramy stawkę z balansu tylko raz
   balance -= bet;
-  
   revealedCells = 0;
-  // Zmniejszony startowy mnożnik dla mniejszej liczby bomb
-  multiplier = 1 + (bombsCount * 0.1) + (Math.pow(bombsCount, 1.1) * 0.003);
+  multiplier = 1;
   gameActive = true;
 
   updateBalanceDisplay();
   createBoard();
   placeBombs();
-  updateNextMultiplierDisplay(); // Wyświetlamy potencjalny mnożnik dla pierwszego kliknięcia
-  updateCurrentPayout(); // Wyświetlamy aktualną kwotę do wypłaty
+  updateNextMultiplierDisplay();
+  updateCurrentPayout();
 
   startButton.disabled = true;
   cashoutButton.disabled = false;
@@ -206,27 +236,9 @@ function showCellMultiplierPreview(cell) {
 }
 
 function calculateMultiplierIncrement() {
-  const totalSafeCells = 25 - bombsCount;
-  const remainingSafeCells = totalSafeCells - revealedCells;
-  
-  if (remainingSafeCells <= 0) return 0;
-
-  // Mniejsza baza dla niskiego ryzyka, ale wyższa przyrosty dla większej liczby odkrytych pól
-  let baseIncrement = 0.02 + (bombsCount * 0.005);
-  
-  // Czynnik ryzyka - im mniej bezpiecznych pól, tym większy przyrost
-  const riskFactor = Math.pow((totalSafeCells - remainingSafeCells + 1) / totalSafeCells, 1.2);
-  
-  // Zwiększony przyrost w zależności od liczby odkrytych pól
-  const progressionFactor = 1 + (revealedCells / totalSafeCells);
-  
-  // Im mniej bezpiecznych pól zostało, tym większa szansa na bombę
-  const bombChanceFactor = Math.pow(bombsCount / remainingSafeCells, 0.7);
-  
-  // Finalny przyrost mnożnika
-  const increment = baseIncrement * (1 + riskFactor) * (1 + progressionFactor) * (1 + bombChanceFactor);
-  
-  return Math.min(increment, 3.0); // Ograniczamy przyrost, by uniknąć zbyt dużych mnożników
+  // Nowy mnożnik po kolejnym kliknięciu minus obecny mnożnik
+  const nextMultiplier = calculateMultiplier(bombsCount, revealedCells + 1);
+  return nextMultiplier - multiplier;
 }
 
 // Aktualizacja wyświetlania potencjalnego mnożnika za następne kliknięcie
@@ -235,28 +247,25 @@ function updateNextMultiplierDisplay() {
     nextMultiplierDiv.style.display = "none";
     return;
   }
-  
-  const increment = calculateMultiplierIncrement();
+  const nextMult = calculateMultiplier(bombsCount, revealedCells + 1);
+  const increment = nextMult - multiplier;
   nextMultiplierDiv.style.display = "block";
-  nextMultiplierDiv.innerHTML = `Następne kliknięcie: <span class="multiplier-highlight">+${increment.toFixed(2)}x</span> <span class="potential-win">(${Math.round(currentBet * (multiplier + increment))}zł)</span>`;
-  
-   // Dodajemy wizualne podkreślenie opłacalności następnego kliknięcia
-   const potentialNextWin = currentBet * (multiplier + increment);
-   const currentWin = currentBet * multiplier;
-   const gainPercentage = ((potentialNextWin - currentWin) / currentWin) * 100;
- 
-   // Zmiana kolorów w zależności od opłacalności
-   if (gainPercentage > 20) {
-     nextMultiplierDiv.classList.add("high-gain");
-     nextMultiplierDiv.classList.remove("medium-gain", "low-gain");
-   } else if (gainPercentage > 10) {
-     nextMultiplierDiv.classList.add("medium-gain");
-     nextMultiplierDiv.classList.remove("high-gain", "low-gain");
-   } else {
-     nextMultiplierDiv.classList.add("low-gain");
-     nextMultiplierDiv.classList.remove("high-gain", "medium-gain");
-   }
- }
+  nextMultiplierDiv.innerHTML = `Następne kliknięcie: <span class="multiplier-highlight">+${increment.toFixed(4)}x</span> <span class="potential-win">(${Math.round(currentBet * nextMult)}zł)</span>`;
+  // ...kolorowanie jak wcześniej...
+  const potentialNextWin = currentBet * nextMult;
+  const currentWin = currentBet * multiplier;
+  const gainPercentage = ((potentialNextWin - currentWin) / currentWin) * 100;
+  if (gainPercentage > 20) {
+    nextMultiplierDiv.classList.add("high-gain");
+    nextMultiplierDiv.classList.remove("medium-gain", "low-gain");
+  } else if (gainPercentage > 10) {
+    nextMultiplierDiv.classList.add("medium-gain");
+    nextMultiplierDiv.classList.remove("high-gain", "low-gain");
+  } else {
+    nextMultiplierDiv.classList.add("low-gain");
+    nextMultiplierDiv.classList.remove("high-gain", "medium-gain");
+  }
+}
 
 function placeBombs() {
   bombPositions = [];
@@ -297,28 +306,19 @@ function revealCell(cell, index) {
   } else {
     // Poprawna komórka
     revealedCells++;
-    
-    // Obliczamy przyrost mnożnika
-    const increment = calculateMultiplierIncrement();
-    multiplier += increment;
-    
+    // Obliczamy nowy mnożnik
+    const prevMultiplier = multiplier;
+    multiplier = calculateMultiplier(bombsCount, revealedCells);
     // Aktualizujemy wyświetlanie mnożnika z animacją
-    animateMultiplier(multiplier - increment, multiplier);
-    
+    animateMultiplier(prevMultiplier, multiplier);
     // Pokazujemy wartość przyrostu
-    showMultiplierIncrease(increment);
-    
-    // Dodajemy wartość kafelka (można dodać losowe wartości dla urozmaicenia)
+    showMultiplierIncrease(multiplier - prevMultiplier);
     cell.innerHTML = "💰";
-    
-    // Aktualizujemy informacje o kolejnym przyroście mnożnika i aktualnej wypłacie
     updateNextMultiplierDisplay();
     updateCurrentPayout();
-
     // Sprawdź czy wszystkie bezpieczne pola zostały odkryte
     const totalSafeCells = 25 - bombsCount;
     if (revealedCells === totalSafeCells) {
-      // Sprawdź czy odgadnięto ponad 50% pól
       createConfetti();
       endGame(true);
     }
