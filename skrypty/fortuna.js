@@ -270,3 +270,4 @@ mobileBtn.addEventListener('click', () => {
 });
 // 16. Uruchomienie gry po załadowaniu strony
 window.onload = initGame;
+alert('Gra jest w trakcie prac i mogą występować błędy.');
