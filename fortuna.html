@@ -1,165 +1,116 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kosierb's Casino - Koło Fortuny</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style/fortuna.css" />
-    <audio id="spinSound" src="dzwieki/spin.mp3" preload="auto"></audio>
-    <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
-    <audio id="jackpotSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kosierb's Casino - Crash</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style/fortuna.css" />
+  <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
+  <audio id="jackpotSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo">
-                <img src="/obrazy/logo.png" alt="Kosierb's Casino Logo" class="logo-img" />
-            </div>
-
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Strona Główna</a>
-                <a href="slots.html" class="nav-link"><i class="fa-solid fa-cash-register"></i> Jednoręki Bandyta</a>
-                <a href="saper.html" class="nav-link"><i class="fa-solid fa-bomb"></i> Miny</a>
-                <a href="fortuna.html" class="nav-link"><i class="fa-solid fa-certificate"></i> Koło Fortuny</a>
-                <a href="plinko.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Plinko</a>
-                <a href="game5.html" class="nav-link"><i class="fas fa-poker"></i> Gra 5</a>
-            </div>
-
-            <div class="nav-controls">
-                <div class="balance">
-                    <span class="balance-label">Saldo:</span>
-                    <span class="balance-amount" id="balance">1,000.00</span>
-                    <span class="balance-currency">PLN</span>
-                </div>
-
-                <div class="dropdown">
-                    <button class="dropdown-btn"><i class="fas fa-cog"></i> Opcje</button>
-                    <div class="dropdown-content">
-                        <button id="soundButton" onclick="toggleSound()">
-                            <i class="fas fa-volume-up"></i> Dźwięk: WŁ
-                        </button>
-                        <button id="resetButton" onclick="resetGame()">
-                            <i class="fas fa-redo"></i> Reset
-                        </button>
-                        <button id="helpModal">
-                            <i class="fas fa-question-circle"></i> Pomoc
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <img src="/obrazy/logo.png" alt="Kosierb's Casino Logo" class="logo-img" />
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Strona Główna</a>
+        <a href="slots.html" class="nav-link"><i class="fa-solid fa-cash-register"></i> Jednoręki Bandyta</a>
+        <a href="saper.html" class="nav-link"><i class="fa-solid fa-bomb"></i> Miny</a>
+        <a href="fortuna.html" class="nav-link active"><i class="fa-solid fa-bolt"></i> Crash</a>
+        <a href="plinko.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Plinko</a>
+        <a href="game5.html" class="nav-link"><i class="fas fa-poker"></i> Gra 5</a>
+      </div>
+      <div class="nav-controls">
+        <div class="balance">
+          <span class="balance-label">Saldo:</span>
+          <span class="balance-amount" id="balance">1,000.00</span>
+          <span class="balance-currency">PLN</span>
         </div>
-    </nav>
-
-    <div class="container">
-        <header class="game-header">
-            <h1><i class="fas fa-wheel"></i> Koło Fortuny</h1>
-            <p class="game-subtitle">Zakręć i wygraj wielką wygraną!</p>
-        </header>
-
-        <div class="game-controls">
-            <div class="bet-controls">
-                <div class="bet-amount">
-                    <label for="betInput" class="control-label">Stawka (PLN)</label>
-                    <div class="input-group">
-                        <button class="bet-step" onclick="changeBet(-10)">-10</button>
-                        <input id="betInput" type="number" value="50" min="10" step="10" />
-                        <button class="bet-step" onclick="changeBet(10)">+10</button>
-                    </div>
-                </div>
-
-                <div class="multiplier-display">
-                    <span class="multiplier-label">Maks. wygrana:</span>
-                    <span class="multiplier-value" id="multiplierValue">2,000 PLN</span>
-                </div>
-            </div>
-
-            <div class="quick-bets">
-                <button class="quick-bet" onclick="setBet(10)">10</button>
-                <button class="quick-bet" onclick="setBet(20)">20</button>
-                <button class="quick-bet" onclick="setBet(50)">50</button>
-                <button class="quick-bet" onclick="setBet(100)">100</button>
-            </div>
-        </div>
-
-        <div class="game-area">
-            <div class="wheel-container">
-                <div class="wheel" id="wheel">
-                    </div>
-                <div class="wheel-center"></div>
-                <div class="wheel-pointer"></div>
-            </div>
-
-            <button id="spinButton" class="spin-btn">
-                <span class="spin-icon"><i class="fas fa-redo"></i></span>
-                <span class="spin-text">ZAKRĘĆ!</span>
-            </button>
-
-            <div class="result-container">
-                <div class="result" id="result"></div>
-                <div class="last-win" id="lastWin"></div>
-            </div>
-        </div>
-
-        <div class="game-stats">
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-label">Spiny</div>
-                        <div class="stat-value" id="totalSpins">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-label">Wygrane</div>
-                        <div class="stat-value" id="totalWins">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-crown"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-label">Najwyższa wygrana</div>
-                        <div class="stat-value" id="highestWin">0 PLN</div>
-                    </div>
-                </div>
-
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-coins"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-label">Dodane środki</div>
-                        <div class="stat-value" id="totalAdded">0 PLN</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
-
-    <footer class="game-footer">
-        <div class="footer-content">
-            <p>© 2023 Kosierb's Casino. Wszelkie prawa zastrzeżone.</p>
-            <div class="footer-links">
-                <a href="#">Regulamin</a>
-                <a href="#">Polityka prywatności</a>
-                <a href="#">Kontakt</a>
-            </div>
+  </nav>
+  <div class="container">
+    <header class="game-header">
+      <h1><i class="fa-solid fa-bolt"></i> Crash</h1>
+      <p class="game-subtitle">Kliknij Start, obserwuj mnożnik i wypłać zanim nastąpi CRASH!</p>
+    </header>
+    <div class="game-controls">
+      <div class="bet-controls">
+        <div class="bet-amount">
+          <label for="betInput" class="control-label">Stawka (PLN)</label>
+          <div class="input-group">
+            <button class="bet-step" onclick="changeBet(-10)">-10</button>
+            <input id="betInput" type="number" value="50" min="1" step="1" />
+            <button class="bet-step" onclick="changeBet(10)">+10</button>
+          </div>
         </div>
-        <div class="responsible-gambling">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Odpowiedzialna gra. Graj odpowiedzialnie.</span>
+      </div>
+      <div class="crash-controls">
+        <button id="startButton" class="spin-btn"><i class="fas fa-play"></i> Start</button>
+        <button id="cashoutButton" class="spin-btn" disabled><i class="fas fa-money-bill-wave"></i> Wypłać</button>
+      </div>
+      <div class="crash-countdown" id="crashCountdown"></div>
+      <div class="crash-payout-info">Aktualna wypłata: <span id="crashPayout">0 PLN</span></div>
+      <div class="crash-multiplier-container">
+        <span class="crash-multiplier" id="crashMultiplier">1.00x</span>
+      </div>
+      <div class="result-container">
+        <div class="result" id="result"></div>
+      </div>
+    </div>
+    <div class="game-stats">
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Gier</div>
+            <div class="stat-value" id="totalGames">0</div>
+          </div>
         </div>
-    </footer>
-
-    <script src="skrypty/fortuna.js"></script>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Wygrane</div>
+            <div class="stat-value" id="totalWins">0</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-crown"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Najwyższa wygrana</div>
+            <div class="stat-value" id="highestWin">0 PLN</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-coins"></i></div>
+          <div class="stat-info">
+            <div class="stat-label">Dodane środki</div>
+            <div class="stat-value" id="totalAdded">0 PLN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="game-footer">
+    <div class="footer-content">
+      <p>© 2023 Kosierb's Casino. Wszelkie prawa zastrzeżone.</p>
+      <div class="footer-links">
+        <a href="#">Regulamin</a>
+        <a href="#">Polityka prywatności</a>
+        <a href="#">Kontakt</a>
+      </div>
+    </div>
+    <div class="responsible-gambling">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Odpowiedzialna gra. Graj odpowiedzialnie.</span>
+    </div>
+  </footer>
+  <script src="skrypty/fortuna.js"></script>
 </body>
 </html>
