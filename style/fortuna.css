@@ -200,6 +200,9 @@ h1, h2, h3, h4 {
   margin: 100px auto 40px;
   padding: 30px;
   flex: 1;
+  background-color: var(--background-medium);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
 }
 
 .game-header {
@@ -224,7 +227,7 @@ h1, h2, h3, h4 {
 
 /* ===== GAME CONTROLS ===== */
 .game-controls {
-  background-color: var(--background-medium);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 30px;
@@ -265,7 +268,7 @@ h1, h2, h3, h4 {
   font-size: 16px;
   font-weight: 500;
   text-align: center;
-  border-radius: 0;
+  border-radius: 4px;
 }
 
 .input-group input:focus {
@@ -487,13 +490,13 @@ h1, h2, h3, h4 {
 }
 
 .result.win {
-  color: #4caf50;
-  background: rgba(76, 175, 80, 0.08);
+  color: var(--win-color);
+  background: rgba(76, 175, 80, 0.1);
 }
 
 .result.lose {
-  color: #f44336;
-  background: rgba(244, 67, 54, 0.08);
+  color: var(--lose-color);
+  background: rgba(244, 67, 54, 0.1);
 }
 
 .last-win {
@@ -751,4 +754,39 @@ h1, h2, h3, h4 {
   0% { opacity: 0.8; }
   50% { opacity: 1; }
   100% { opacity: 0.8; }
+}
+
+#crashCountdown {
+  font-size: 2rem;
+  color: #ffd700; /* Złoty kolor */
+  text-align: center;
+  margin: 20px 0;
+}
+
+.current-payout {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4caf50; /* Zielony kolor */
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Animacje dla odliczania */
+.countdown-animation {
+  animation: pulse 1s infinite; /* Pulsująca animacja */
+}
+
+/* Animacja dla GO! */
+.go-animation {
+  font-weight: bold;
+  animation: shake 0.5s; /* Animacja wstrząsania */
+}
+
+/* Animacja wstrząsania */
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-5px); }
+  50% { transform: translate(5px); }
+  75% { transform: translate(-5px); }
+  100% { transform: translate(0); }
 }

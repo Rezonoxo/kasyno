@@ -6,8 +6,10 @@
   <title>Kosierb's Casino - Crash</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style/fortuna.css" />
+  <!-- Preload audio files -->
+  <audio id="spinSound" src="dzwieki/spin.mp3" preload="auto"></audio>
   <audio id="winSound" src="dzwieki/win.mp3" preload="auto"></audio>
-  <audio id="jackpotSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
+  <audio id="crashSound" src="dzwieki/jackpot.mp3" preload="auto"></audio>
 </head>
 <body>
   <nav class="navbar">
@@ -26,44 +28,58 @@
       <div class="nav-controls">
         <div class="balance">
           <span class="balance-label">Saldo:</span>
-          <span class="balance-amount" id="balance">1,000.00</span>
+          <span class="balance-amount" id="balance">0</span>
           <span class="balance-currency">PLN</span>
         </div>
+        <button id="soundButton" class="sound-btn sound-on"><i class="fas fa-volume-up"></i> Dźwięk</button>
       </div>
       <button class="mobile-menu-btn">
         <i class="fas fa-bars"></i>
       </button>
     </div>
   </nav>
+
   <div class="container">
     <header class="game-header">
       <h1><i class="fa-solid fa-bolt"></i> Crash</h1>
       <p class="game-subtitle">Kliknij Start, obserwuj mnożnik i wypłać zanim nastąpi CRASH!</p>
     </header>
+
     <div class="game-controls">
       <div class="bet-controls">
         <div class="bet-amount">
           <label for="betInput" class="control-label">Stawka (PLN)</label>
           <div class="input-group">
             <button class="bet-step" onclick="changeBet(-10)">-10</button>
-            <input id="betInput" type="number" value="50" min="1" step="1" />
+            <input id="betInput" type="number" value="50" min="10" step="10" />
             <button class="bet-step" onclick="changeBet(10)">+10</button>
+          </div>
+          <div class="quick-bet-buttons">
+            <button class="quick-bet" onclick="setBet(10)">10</button>
+            <button class="quick-bet" onclick="setBet(50)">50</button>
+            <button class="quick-bet" onclick="setBet(100)">100</button>
+            <button class="quick-bet" onclick="setBet(200)">200</button>
           </div>
         </div>
       </div>
+
       <div class="crash-controls">
         <button id="startButton" class="spin-btn"><i class="fas fa-play"></i> Start</button>
-        <button id="cashoutButton" class="spin-btn" disabled><i class="fas fa-money-bill-wave"></i> Wypłać</button>
+        <button id="cashoutButton" class="cashout-btn" disabled><i class="fas fa-money-bill-wave"></i> Wypłać</button>
       </div>
+
       <div class="crash-countdown" id="crashCountdown"></div>
       <div class="crash-payout-info">Aktualna wypłata: <span id="crashPayout">0 PLN</span></div>
+      
       <div class="crash-multiplier-container">
         <span class="crash-multiplier" id="crashMultiplier">1.00x</span>
       </div>
+
       <div class="result-container">
         <div class="result" id="result"></div>
       </div>
     </div>
+
     <div class="game-stats">
       <div class="stats-container">
         <div class="stat-item">
@@ -95,8 +111,32 @@
           </div>
         </div>
       </div>
+      <div class="control-buttons">
+        <button id="resetButton" class="control-btn"><i class="fas fa-redo"></i> Reset</button>
+        <button id="helpButton" class="control-btn" onclick="openHelpModal()"><i class="fas fa-question-circle"></i> Pomoc</button>
+      </div>
     </div>
   </div>
+
+  <!-- Modal pomocy -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeHelpModal()">&times;</span>
+      <h2>Jak grać w Crash?</h2>
+      <div class="help-content">
+        <p><strong>Crash</strong> to gra oparta na ryzyku i wyczuciu czasu.</p>
+        <ol>
+          <li>Ustaw kwotę zakładu.</li>
+          <li>Kliknij przycisk <strong>Start</strong> aby rozpocząć grę.</li>
+          <li>Mnożnik zacznie rosnąć od wartości 1.00x.</li>
+          <li>Kliknij <strong>Wypłać</strong> w dowolnym momencie, aby zabezpieczyć wygraną równą stawce pomnożonej przez aktualny mnożnik.</li>
+          <li>Jeśli nie zdążysz wypłacić przed crashem, tracisz cały zakład!</li>
+        </ol>
+        <p><strong>Wskazówka:</strong> Im dłużej czekasz, tym większy mnożnik i potencjalna wygrana, ale również większe ryzyko!</p>
+      </div>
+    </div>
+  </div>
+
   <footer class="game-footer">
     <div class="footer-content">
       <p>© 2023 Kosierb's Casino. Wszelkie prawa zastrzeżone.</p>
@@ -111,6 +151,7 @@
       <span>Odpowiedzialna gra. Graj odpowiedzialnie.</span>
     </div>
   </footer>
+
   <script src="skrypty/fortuna.js"></script>
 </body>
 </html>
