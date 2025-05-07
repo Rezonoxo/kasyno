@@ -1,7 +1,13 @@
 // Konfiguracja gry
 const config = {
-  minBet: 10,
+  minBet: 1,
   startingBalance: 0, // Balans początkowy
+  minCrash: 0.25, // Minimalna wartość crash
+  maxCrash: 10, // Maksymalna wartość crash
+  chanceToHitMin: 0.30, // 30% szans na osiągnięcie minCrash
+  chanceToHitMax: 0.01, // 5% szans na osiągnięcie maxCrash
+  chanceToHitOne: 0.50, // 50% szans na osiągnięcie 1.0
+  speed: 0.0001 // Szybkość wzrostu mnożnika
 };
 
 // Dźwięki
@@ -25,7 +31,7 @@ const state = {
   bet: parseInt(localStorage.getItem("crashLastBet")) || config.minBet,
   running: false,
   crashed: false,
-  multiplier: 1.0,
+  multiplier: 0.0,
   animationFrame: null,
   crashAt: 0,
   countdown: 0,
@@ -101,9 +107,11 @@ function resetGame() {
 }
 
 // Zmiana stawki
-function changeBet(amount) {
+function changeBet(percentage) {
   if (!state.running) {
-    let newBet = state.bet + amount;
+    let changeAmount = Math.floor(state.bet * (percentage / 100)); // Calculate 10% of the current bet
+    let newBet = state.bet + changeAmount;
+
     if (newBet < config.minBet) {
       newBet = config.minBet;
       elements.result.textContent = `Minimalna stawka to ${config.minBet} PLN.`;
@@ -153,6 +161,10 @@ function setupEventListeners() {
       updateUI();
     }
   });
+
+  // Update the bet step buttons to use percentages
+  document.querySelector('.bet-step:first-child').onclick = () => changeBet(-10); // Decrease by 10%
+  document.querySelector('.bet-step:last-child').onclick = () => changeBet(10); // Increase by 10%
 }
 
 // Aktualizacja wypłaty
@@ -200,7 +212,7 @@ function startCrashGame() {
 function initiateCrash() {
   state.running = true;
   state.crashed = false;
-  state.multiplier = 1.00;
+  state.multiplier = 0.00;
   elements.result.textContent = '';
   elements.result.className = 'result';
   elements.startButton.disabled = true;
@@ -216,22 +228,26 @@ function initiateCrash() {
   
   // Losuj kiedy nastąpi crash (wykorzystanie rozkładu wykładniczego)
   const r = Math.random();
-  state.crashAt = Math.max(1.2, Math.floor((-1 / Math.log(1 - r)) * 2 * 100) / 100);
-  
-  // Wartości maksymalne dla róznych rozkładów prawdopodobieństwa:
-  // - Częsty crash, maksimum około 10x: state.crashAt = Math.max(1.2, Math.min(10, (-1 / Math.log(1 - r)) * 2));
-state.crashAt = Math.max(1.2, Math.min(50, (-1 / Math.log(1 - r)) * 5));
-  // - Rzadki crash, maksimum około 100x: state.crashAt = Math.max(1.2, Math.min(100, (-1 / Math.log(1 - r)) * 10));
+
+  // Użyj wartości z konfiguracji
+  if (Math.random() < config.chanceToHitOne) {
+    state.crashAt = 1.5; // Ustaw crashAt na 1.5
+  } else if (Math.random() < config.chanceToHitMin) {
+    state.crashAt = config.minCrash; // Ustaw crashAt na minCrash
+  } else if (Math.random() < config.chanceToHitMax) {
+    state.crashAt = config.maxCrash; // Ustaw crashAt na maxCrash
+  } else {
+    state.crashAt = Math.max(config.minCrash, Math.min(config.maxCrash, (-1 / Math.log(1 - r)) * 5));
+  }
   
   let startTimestamp = null;
-  const speed = 0.1; // Szybkość wzrostu mnożnika
   
   function animateCrashMultiplier(timestamp) {
     if (!state.running || state.crashed) return;
     if (!startTimestamp) startTimestamp = timestamp;
     
     const elapsed = timestamp - startTimestamp;
-    state.multiplier = 1 + (elapsed * speed);
+    state.multiplier = 0 + (elapsed * config.speed);
     elements.crashMultiplier.textContent = state.multiplier.toFixed(2) + 'x';
     updateCrashPayout();
     
