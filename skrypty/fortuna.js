@@ -10,21 +10,6 @@ const config = {
   speed: 0.0001 // Szybkość wzrostu mnożnika
 };
 
-// Dźwięki
-const sounds = {
-  start: new Audio('dzwieki/spin.mp3'),
-  win: new Audio('dzwieki/win.mp3'),
-  crash: new Audio('dzwieki/jackpot.mp3')
-};
-
-function playSound(type) {
-  if (!state.soundEnabled) return;
-  if (sounds[type]) {
-    sounds[type].currentTime = 0;
-    sounds[type].play();
-  }
-}
-
 // Stan gry
 const state = {
   balance: parseInt(localStorage.getItem("balance")) || config.startingBalance,
@@ -64,7 +49,7 @@ const elements = {
 
 // Aktualizacja interfejsu
 function updateUI() {
-  elements.balanceDisplay.textContent = `${state.balance.toLocaleString()} PLN`;
+  elements.balanceDisplay.textContent = `${state.balance.toLocaleString()}`;
   elements.totalGames.textContent = state.stats.totalGames;
   elements.totalWins.textContent = state.stats.totalWins;
   elements.highestWin.textContent = `${state.stats.highestWin.toLocaleString()} PLN`;
