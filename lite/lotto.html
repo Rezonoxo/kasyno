@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symulator Lotto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-primary: #4caf50;
+            --accent-secondary: #2196f3;
+            --accent-danger: #f44336;
+            --accent-warning: #ff9800;
+            --accent-info: #03a9f4;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            text-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-tertiary);
+            color: var(--accent-info);
+        }
+
+        section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Sekcja wyboru trybu */
+        .game-mode-selection {
+            text-align: center;
+        }
+
+        .mode-options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-tertiary);
+            transition: all 0.3s ease;
+        }
+
+        .radio-label:hover {
+            background-color: #3a3a3a;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-primary);
+        }
+
+        /* Sekcje gry */
+        .game-section {
+            position: relative;
+        }
+
+        .number-input-grid, .number-display-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .number-input {
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid #444;
+            border-radius: var(--border-radius);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .number-input:focus {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+        }
+
+        .number-ball {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: var(--bg-tertiary);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .matched {
+            background-color: var(--accent-primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+
+        .input-error {
+            border-color: var(--accent-danger) !important;
+            background: #3a1a1a !important;
+            color: #ffbdbd !important;
+        }
+
+        .input-hit {
+            border-color: var(--accent-primary) !important;
+            background: #1e3a1a !important;
+            color: #baffc9 !important;
+            font-weight: bold;
+        }
+
+        .input-miss {
+            border-color: var(--accent-danger) !important;
+            background: #3a1a1a !important;
+            color: #ffbdbd !important;
+        }
+
+        /* Przyciski */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d8bf2;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #363636;
+        }
+
+        .btn-success {
+            background-color: var(--accent-primary);
+            color: white;
+            display: block;
+            margin: 20px auto 0;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn-success:hover {
+            background-color: #3d8b40;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-danger);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-info {
+            background-color: var(--accent-info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #0288d1;
+        }
+
+        .quick-pick-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Sekcja wyników */
+        .results-section {
+            text-align: center;
+        }
+
+        .result-highlight {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        /* Kumulacja */
+        .jackpot-amount {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--accent-warning);
+            text-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tabela wygranych */
+        .prize-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .prize-table th, .prize-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .prize-table th {
+            background-color: var(--bg-tertiary);
+            font-weight: 600;
+        }
+
+        .prize-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prize-table tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        /* Statystyki */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stats-grid p {
+            padding: 10px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+
+        /* Symulacja wielu kuponów */
+        .simulation-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .simulation-controls label {
+            font-weight: 600;
+        }
+
+        .simulation-controls input {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--bg-tertiary);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            width: 120px;
+        }
+
+        .simulation-results-display {
+            background-color: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        /* Animacje przycisków */
+        .btn-anim-spin {
+            animation: btnSpin 0.6s cubic-bezier(.36,1.6,.6,1) 1;
+        }
+
+        @keyframes btnSpin {
+            0% { transform: scale(1) rotate(0deg); }
+            40% { transform: scale(1.15) rotate(10deg); }
+            60% { transform: scale(0.95) rotate(-8deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* Responsywność */
+        @media (max-width: 768px) {
+            .mode-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quick-pick-group {
+                flex-direction: column;
+            }
+            
+            .button-group, .quick-pick-group {
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .auto-quick-pick-toggle, .user-numbers-counter {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .number-input-grid, .number-display-container {
+                grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            }
+            
+            .number-ball, .number-input {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .jackpot-amount {
+                font-size: 1.6rem;
+            }
+        }
+
+        .auto-quick-pick-toggle {
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        .user-numbers-counter {
+            margin-top: 8px;
+            text-align: right;
+            font-size: 0.95rem;
+            color: var(--accent-info);
+        }
+
+        .quick-pick-group .btn {
+            min-width: 170px;
+        }
+
+        .button-group {
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            justify-content: flex-start;
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--accent-info);
+            outline-offset: 2px;
+        }
+
+        #draw-numbers-btn {
+            animation: pulseDrawBtn 2s infinite;
+            margin: 0 auto;
+            display: block;
+        }
+
+        @keyframes pulseDrawBtn {
+            0% { box-shadow: 0 0 0 0 rgba(33,150,243,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(33,150,243,0); }
+            100% { box-shadow: 0 0 0 0 rgba(33,150,243,0); }
+        }
+
+        #user-numbers-error {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Symulator Lotto</h1>
+
+        <!-- Sekcja wyboru trybu gry -->
+        <section class="game-mode-selection">
+            <h2>Wybierz tryb gry</h2>
+            <div class="mode-options">
+                <label class="radio-label">
+                    <input type="radio" name="gameMode" value="standard" checked> Lotto Standard
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="gameMode" value="mini"> Mini Lotto
+                </label>
+            </div>
+        </section>
+
+        <!-- Sekcja Twoje liczby -->
+        <section class="game-section">
+            <h2>Twoje liczby</h2>
+            <div id="user-numbers-error" style="color:var(--accent-danger);margin-bottom:8px;display:none;font-weight:600;"></div>
+            <div id="user-numbers-inputs" class="number-input-grid">
+                <!-- Pola input dla liczb użytkownika zostaną wygenerowane przez JS -->
+            </div>
+            <div class="button-group">
+                <button id="clear-user-numbers" class="btn btn-secondary" title="Wyczyść wszystkie liczby">Wyczyść liczby</button>
+                <div class="quick-pick-group">
+                    <button id="quick-pick-random" class="btn btn-primary" title="Wybierz losowe liczby">Szybki Strzał (Losowe)</button>
+                    <button id="quick-pick-even" class="btn btn-primary" title="Wybierz tylko parzyste liczby">Szybki Strzał (Parzyste)</button>
+                    <button id="quick-pick-odd" class="btn btn-primary" title="Wybierz tylko nieparzyste liczby">Szybki Strzał (Nieparzyste)</button>
+                    <button id="quick-pick-close" class="btn btn-primary" title="Wybierz liczby blisko siebie">Szybki Strzał (Blisko Siebie)</button>
+                </div>
+            </div>
+            <div class="auto-quick-pick-toggle">
+                <label><input type="checkbox" id="auto-quick-pick"> Automatyczny szybki strzał po losowaniu</label>
+            </div>
+            <div class="user-numbers-counter">
+                <span id="user-numbers-count">0</span>/<span id="user-numbers-max">6</span> liczb wybranych
+            </div>
+        </section>
+
+        <!-- Sekcja Losowanie Lotto -->
+        <section class="game-section">
+            <h2>Losowanie Lotto</h2>
+            <div id="lotto-draw-display" class="number-display-container">
+                <!-- Wylosowane liczby zostaną wyświetlone przez JS -->
+            </div>
+            <button id="draw-numbers-btn" class="btn btn-success">Losuj liczby</button>
+        </section>
+
+        <!-- Sekcja Wyniki -->
+        <section class="results-section">
+            <h2>Wyniki</h2>
+            <p>Twoje trafienia: <span id="matched-numbers-count" class="result-highlight">0</span></p>
+            <div id="matched-numbers-display" class="number-display-container">
+                <!-- Trafione liczby zostaną wyświetlone przez JS -->
+            </div>
+            <p>Symulowana wygrana: <span id="simulated-win-amount" class="result-highlight">0 zł</span></p>
+        </section>
+
+        <!-- Sekcja Dynamiczna Kumulacja (tylko dla Lotto Standard) -->
+        <section id="jackpot-section" class="info-section">
+            <h2>Aktualna Kumulacja Lotto Standard</h2>
+            <p id="current-jackpot" class="jackpot-amount">Ładowanie...</p>
+        </section>
+
+        <!-- Sekcja Tabela Wygranych -->
+        <section class="info-section">
+            <h2>Tabela Wygranych</h2>
+            <div id="prize-table-container">
+                <!-- Tabela wygranych zostanie wygenerowana przez JS -->
+            </div>
+        </section>
+
+        <!-- Sekcja Statystyki -->
+        <section class="stats-section">
+            <h2>Statystyki Symulacji</h2>
+            <div class="stats-grid">
+                <p>Łączna liczba losowań: <span id="stat-total-draws">0</span></p>
+                <p>Wygrane (3 trafienia): <span id="stat-wins-3">0</span></p>
+                <p>Wygrane (4 trafienia): <span id="stat-wins-4">0</span></p>
+                <p>Wygrane (5 trafień): <span id="stat-wins-5">0</span></p>
+                <p>Wygrane (6 trafień): <span id="stat-wins-6">0</span></p>
+                <p>Łączna kwota wygranych: <span id="stat-total-prize-money">0 zł</span></p>
+                <p>Łączny koszt kuponów: <span id="stat-total-cost">0 zł</span></p>
+                <p>Profit/Strata: <span id="stat-profit-loss">0 zł</span></p>
+                <p>Procent zwrotu kosztów: <span id="stat-roi">0%</span></p>
+                <p>Procent wygranych: <span id="stat-win-percentage">0%</span></p>
+            </div>
+            <button id="reset-stats-btn" class="btn btn-danger">Resetuj Statystyki</button>
+        </section>
+
+        <!-- Sekcja Symulacja wielu kuponów -->
+        <section class="simulation-section">
+            <h2>Symulacja Wielu Kuponów</h2>
+            <p>Symuluj zakup i sprawdzenie wielu kuponów, aby ocenić szanse.</p>
+            <div class="simulation-controls">
+                <label for="num-coupons">Liczba kuponów do symulacji:</label>
+                <input type="number" id="num-coupons" min="1" value="1000">
+                <button id="simulate-coupons-btn" class="btn btn-info">Symuluj Kupony</button>
+            </div>
+            <div id="simulation-results" class="simulation-results-display">
+                <!-- Wyniki symulacji zostaną wyświetlone przez JS -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Konfiguracja gry
+        const gameConfig = {
+            standard: {
+                name: "Lotto Standard",
+                numbersCount: 6,
+                minNumber: 1,
+                maxNumber: 49,
+                costPerTicket: 3,
+                prizeTable: {
+                    3: 24,
+                    4: 125,
+                    5: 5080,
+                    6: 27000000 // Bazowa wartość, kumulacja będzie dynamiczna
+                }
+            },
+            mini: {
+                name: "Mini Lotto",
+                numbersCount: 5,
+                minNumber: 1,
+                maxNumber: 42,
+                costPerTicket: 2.5,
+                prizeTable: {
+                    3: 34,
+                    4: 780,
+                    5: 500000
+                }
+            }
+        };
+
+        // Stan aplikacji
+        let currentGameMode = 'standard';
+        let userNumbers = [];
+        let drawnNumbers = [];
+        let matchedNumbers = [];
+        let jackpot = 27000000; // Początkowa kumulacja
+
+        // Statystyki
+        let stats = {
+            totalDraws: 0,
+            wins: { 3: 0, 4: 0, 5: 0, 6: 0 },
+            totalPrizeMoney: 0,
+            totalCost: 0,
+            profitLoss: 0,
+            roi: 0,
+            winPercentage: 0
+        };
+
+        // Inicjalizacja strony
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wczytaj statystyki z localStorage
+            loadStats();
+            
+            // Zainicjuj pola do wpisywania liczb
+            initNumberInputs();
+            
+            // Zainicjuj tabelę wygranych
+            initPrizeTable();
+            
+            // Uruchom symulację kumulacji
+            simulateJackpot();
+            
+            // Zdarzenia
+            setupEventListeners();
+            
+            // Aktualizuj statystyki na stronie
+            updateStatsDisplay();
+        });
+
+        // Inicjalizacja pól do wprowadzania liczb
+        function initNumberInputs() {
+            const config = gameConfig[currentGameMode];
+            const container = document.getElementById('user-numbers-inputs');
+            container.innerHTML = '';
+            document.getElementById('user-numbers-error').style.display = 'none';
+            for (let i = 0; i < config.numbersCount; i++) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = config.minNumber;
+                input.max = config.maxNumber;
+                input.className = 'number-input';
+                input.placeholder = '#' + (i + 1);
+                input.dataset.index = i;
+                input.inputMode = 'numeric';
+                input.addEventListener('input', function(e) {
+                    this.classList.remove('input-error');
+                    // Nie sprawdzaj powtórzeń podczas wpisywania!
+                    document.getElementById('user-numbers-error').style.display = 'none';
+                    const value = parseInt(this.value);
+                    if (isNaN(value) || value < config.minNumber || value > config.maxNumber) {
+                        this.value = '';
+                        userNumbers[i] = null;
+                    } else {
+                        userNumbers[i] = value;
+                        // Automatyczne przejście do następnego pola po wpisaniu 2 cyfr
+                        if (this.value.length === 2 && i < config.numbersCount - 1) {
+                            const nextInput = container.querySelector(`input[data-index="${i + 1}"]`);
+                            if (nextInput) nextInput.focus();
+                        }
+                    }
+                    updateUserNumbersCounter();
+                });
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowLeft' && i > 0) {
+                        container.querySelector(`input[data-index="${i - 1}"]`).focus();
+                    } else if (e.key === 'ArrowRight' && i < config.numbersCount - 1) {
+                        container.querySelector(`input[data-index="${i + 1}"]`).focus();
+                    }
+                });
+                container.appendChild(input);
+            }
+            userNumbers = Array(config.numbersCount).fill(null);
+            document.getElementById('user-numbers-max').textContent = config.numbersCount;
+            updateUserNumbersCounter();
+        }
+
+        // Licznik wybranych liczb
+        function updateUserNumbersCounter() {
+            const count = userNumbers.filter(x => x !== null).length;
+            document.getElementById('user-numbers-count').textContent = count;
+        }
+
+        // Inicjalizacja tabeli wygranych
+        function initPrizeTable() {
+            const container = document.getElementById('prize-table-container');
+            const config = gameConfig[currentGameMode];
+            
+            let tableHTML = `
+                <table class="prize-table">
+                    <thead>
+                        <tr>
+                            <th>Liczba trafionych</th>
+                            <th>Wygrana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Dodaj wiersze dla każdego progu wygranej
+            for (const [hits, prize] of Object.entries(config.prizeTable)) {
+                // Dla kumulacji używamy aktualnej wartości jackpot
+                let prizeAmount = (hits === '6' && currentGameMode === 'standard') ? jackpot : prize;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${hits}</td>
+                        <td>${formatCurrency(prizeAmount)}</td>
+                    </tr>
+                `;
+            }
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        // Symulacja kumulacji
+        function simulateJackpot() {
+            const jackpotElement = document.getElementById('current-jackpot');
+            
+            // Aktualizuj kumulację co 3 godziny (w rzeczywistości co 10 sekund dla demonstracji)
+            setInterval(() => {
+                // Losowa zmiana kumulacji (3-57 mln)
+                const min = 3000000;
+                const max = 57000000;
+                
+                // Szansa 20% na zmianę kumulacji
+                if (Math.random() < 0.2) {
+                    // Zmiana o ±10%
+                    const changeFactor = Math.random() < 0.5 ? 0.9 : 1.1;
+                    jackpot = Math.round(Math.max(min, Math.min(max, jackpot * changeFactor)));
+                }
+                
+                jackpotElement.textContent = formatCurrency(jackpot);
+                
+                // Zaktualizuj tabelę wygranych (dla przypadku 6 trafień)
+                if (currentGameMode === 'standard') {
+                    initPrizeTable();
+                }
+            }, 10000); // 10 sekund dla demonstracji (w rzeczywistości 3 godziny = 10800000ms)
+            
+            // Początkowa wartość
+            jackpotElement.textContent = formatCurrency(jackpot);
+        }
+
+        // Funkcja losująca liczby
+        function drawNumbers() {
+            const config = gameConfig[currentGameMode];
+            // Sprawdź powtórzenia liczb użytkownika
+            const seen = {};
+            let hasDuplicate = false;
+            const inputs = document.querySelectorAll('#user-numbers-inputs input');
+            inputs.forEach(input => input.classList.remove('input-error'));
+            for (let i = 0; i < userNumbers.length; i++) {
+                const val = userNumbers[i];
+                if (val !== null) {
+                    if (seen[val]) {
+                        hasDuplicate = true;
+                        inputs[i].classList.add('input-error');
+                    } else {
+                        seen[val] = true;
+                    }
+                }
+            }
+            if (hasDuplicate) {
+                document.getElementById('user-numbers-error').textContent = 'Nie można powtarzać liczb!';
+                document.getElementById('user-numbers-error').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('user-numbers-error').style.display = 'none';
+            }
+            // Animacja losowania
+            const drawBtn = document.getElementById('draw-numbers-btn');
+            drawBtn.classList.add('btn-anim-spin');
+            setTimeout(() => drawBtn.classList.remove('btn-anim-spin'), 600);
+            drawnNumbers = [];
+            while (drawnNumbers.length < config.numbersCount) {
+                const randomNum = Math.floor(Math.random() * (config.maxNumber - config.minNumber + 1)) + config.minNumber;
+                if (!drawnNumbers.includes(randomNum)) {
+                    drawnNumbers.push(randomNum);
+                }
+            }
+            drawnNumbers.sort((a, b) => a - b);
+            displayNumbers(drawnNumbers, 'lotto-draw-display');
+            checkResults();
+            // Animacja szybkiego strzału jeśli aktywny
+            if (document.getElementById('auto-quick-pick').checked) {
+                const quickBtn = document.getElementById('quick-pick-random');
+                quickBtn.classList.add('btn-anim-spin');
+                setTimeout(() => quickBtn.classList.remove('btn-anim-spin'), 600);
+                setTimeout(() => quickPick('random'), 400);
+            }
+        }
+
+        // Wyświetlanie liczb w kontenerze
+        function displayNumbers(numbers, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (containerId === 'matched-numbers-display') {
+                numbers.forEach(num => {
+                    const ball = document.createElement('div');
+                    ball.className = 'number-ball matched';
+                    ball.textContent = num;
+                    container.appendChild(ball);
+                });
+            } else if (containerId === 'lotto-draw-display') {
+                numbers.forEach(num => {
+                    const ball = document.createElement('div');
+                    ball.className = 'number-ball';
+                    ball.textContent = num;
+                    container.appendChild(ball);
+                });
+            }
+        }
+
+        // Sprawdzanie wyników
+        function checkResults() {
+            const config = gameConfig[currentGameMode];
+            
+            // Znajdź trafione liczby
+            matchedNumbers = userNumbers.filter(num => num !== null && drawnNumbers.includes(num));
+            
+            // Wyświetl liczbę trafień
+            document.getElementById('matched-numbers-count').textContent = matchedNumbers.length;
+            
+            // Wyświetl trafione liczby
+            displayNumbers(matchedNumbers, 'matched-numbers-display');
+            
+            // Podświetl inputy użytkownika: zielone jeśli trafione, czerwone jeśli nietrafione
+            const inputs = document.querySelectorAll('#user-numbers-inputs input');
+            inputs.forEach((input, idx) => {
+                input.classList.remove('input-hit', 'input-miss');
+                const val = parseInt(input.value);
+                if (!isNaN(val)) {
+                    if (drawnNumbers.includes(val)) {
+                        input.classList.add('input-hit');
+                    } else {
+                        input.classList.add('input-miss');
+                    }
+                }
+            });
+            
+            // Oblicz wygraną
+            const winAmount = calculateWinAmount(matchedNumbers.length);
+            document.getElementById('simulated-win-amount').textContent = formatCurrency(winAmount);
+            
+            // Aktualizuj statystyki
+            updateStats(winAmount);
+        }
+
+        // Obliczanie wygranej
+        function calculateWinAmount(hits) {
+            const config = gameConfig[currentGameMode];
+            
+            // Sprawdź czy jest wygrana w tabeli
+            if (config.prizeTable[hits] !== undefined) {
+                // Dla kumulacji używamy aktualnej wartości jackpot
+                return (hits === 6 && currentGameMode === 'standard') ? jackpot : config.prizeTable[hits];
+            }
+            
+            return 0;
+        }
+
+        // Aktualizacja statystyk
+        function updateStats(winAmount) {
+            const config = gameConfig[currentGameMode];
+            const hits = matchedNumbers.length;
+            
+            // Zwiększ licznik losowań
+            stats.totalDraws++;
+            
+            // Dodaj wygraną jeśli jest
+            if (winAmount > 0) {
+                stats.totalPrizeMoney += winAmount;
+                
+                // Zaktualizuj licznik wygranych dla danego progu
+                if (hits >= 3 && hits <= 6) {
+                    stats.wins[hits]++;
+                }
+            }
+            
+            // Koszt - zakładamy, że każdy kupon kosztuje
+            stats.totalCost += config.costPerTicket;
+            
+            // Profit/Strata
+            stats.profitLoss = stats.totalPrizeMoney - stats.totalCost;
+            
+            // ROI (Procent zwrotu kosztów)
+            stats.roi = stats.totalCost > 0 ? 
+                Math.round((stats.totalPrizeMoney / stats.totalCost) * 100) : 0;
+            
+            // Procent wygranych
+            const winsCount = Object.values(stats.wins).reduce((sum, count) => sum + count, 0);
+            stats.winPercentage = stats.totalDraws > 0 ? 
+                Math.round((winsCount / stats.totalDraws) * 100) : 0;
+            
+            // Zapisz statystyki w localStorage
+            saveStats();
+            
+            // Aktualizuj wyświetlane statystyki
+            updateStatsDisplay();
+        }
+
+        // Zapisz statystyki w localStorage
+        function saveStats() {
+            localStorage.setItem('lottoStats', JSON.stringify(stats));
+        }
+
+        // Wczytaj statystyki z localStorage
+        function loadStats() {
+            const savedStats = localStorage.getItem('lottoStats');
+            if (savedStats) {
+                stats = JSON.parse(savedStats);
+            }
+        }
+
+        // Aktualizuj wyświetlane statystyki
+        function updateStatsDisplay() {
+            document.getElementById('stat-total-draws').textContent = stats.totalDraws;
+            document.getElementById('stat-wins-3').textContent = stats.wins[3];
+            document.getElementById('stat-wins-4').textContent = stats.wins[4];
+            document.getElementById('stat-wins-5').textContent = stats.wins[5];
+            document.getElementById('stat-wins-6').textContent = stats.wins[6];
+            document.getElementById('stat-total-prize-money').textContent = formatCurrency(stats.totalPrizeMoney);
+            document.getElementById('stat-total-cost').textContent = formatCurrency(stats.totalCost);
+            document.getElementById('stat-profit-loss').textContent = formatCurrency(stats.profitLoss);
+            document.getElementById('stat-roi').textContent = stats.roi + '%';
+            document.getElementById('stat-win-percentage').textContent = stats.winPercentage + '%';
+        }
+
+        // Funkcje pomocnicze
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pl-PL', {
+                style: 'currency',
+                currency: 'PLN',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Generowanie liczb - szybki strzał
+        function quickPick(strategy) {
+            const config = gameConfig[currentGameMode];
+            const numbers = [];
+            
+            switch(strategy) {
+                case 'random':
+                    // Losowe liczby
+                    while (numbers.length < config.numbersCount) {
+                        const randomNum = Math.floor(Math.random() * (config.maxNumber - config.minNumber + 1)) + config.minNumber;
+                        if (!numbers.includes(randomNum)) {
+                            numbers.push(randomNum);
+                        }
+                    }
+                    break;
+                    
+                case 'even':
+                    // Tylko parzyste
+                    const evenNumbers = Array.from({length: config.maxNumber}, (_, i) => i + 1)
+                        .filter(num => num % 2 === 0);
+                    shuffleArray(evenNumbers);
+                    numbers.push(...evenNumbers.slice(0, config.numbersCount));
+                    break;
+                    
+                case 'odd':
+                    // Tylko nieparzyste
+                    const oddNumbers = Array.from({length: config.maxNumber}, (_, i) => i + 1)
+                        .filter(num => num % 2 !== 0);
+                    shuffleArray(oddNumbers);
+                    numbers.push(...oddNumbers.slice(0, config.numbersCount));
+                    break;
+                    
+                case 'close':
+                    // Liczby blisko siebie
+                    const start = Math.floor(Math.random() * (config.maxNumber - config.numbersCount - config.minNumber + 1)) + config.minNumber;
+                    for (let i = 0; i < config.numbersCount; i++) {
+                        numbers.push(start + i);
+                    }
+                    break;
+            }
+            
+            // Posortuj liczby
+            numbers.sort((a, b) => a - b);
+            
+            // Ustaw liczby w polach input
+            const inputs = document.querySelectorAll('#user-numbers-inputs input');
+            inputs.forEach((input, index) => {
+                input.value = numbers[index];
+                userNumbers[index] = numbers[index];
+            });
+        }
+
+        // Pomocnicza funkcja do mieszania tablicy
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Symulacja wielu kuponów
+        function simulateMultipleCoupons() {
+            const numCoupons = parseInt(document.getElementById('num-coupons').value) || 1000;
+            const config = gameConfig[currentGameMode];
+            
+            // Wyniki symulacji
+            const simulationResults = {
+                totalCoupons: numCoupons,
+                wins: { 3: 0, 4: 0, 5: 0, 6: 0 },
+                totalPrizeMoney: 0,
+                totalCost: numCoupons * config.costPerTicket
+            };
+            
+            // Symuluj każdy kupon
+            for (let i = 0; i < numCoupons; i++) {
+                // Wygeneruj losowe liczby dla użytkownika
+                const userNums = [];
+                while (userNums.length < config.numbersCount) {
+                    const randomNum = Math.floor(Math.random() * (config.maxNumber - config.minNumber + 1)) + config.minNumber;
+                    if (!userNums.includes(randomNum)) {
+                        userNums.push(randomNum);
+                    }
+                }
+                
+                // Wygeneruj losowe liczby w losowaniu
+                const drawnNums = [];
+                while (drawnNums.length < config.numbersCount) {
+                    const randomNum = Math.floor(Math.random() * (config.maxNumber - config.minNumber + 1)) + config.minNumber;
+                    if (!drawnNums.includes(randomNum)) {
+                        drawnNums.push(randomNum);
+                    }
+                }
+                
+                // Oblicz trafienia
+                const hits = userNums.filter(num => drawnNums.includes(num)).length;
+                
+                // Sprawdź czy jest wygrana
+                if (config.prizeTable[hits] !== undefined) {
+                    // Zwiększ licznik wygranych
+                    simulationResults.wins[hits]++;
+                    
+                    // Dodaj wygraną
+                    const winAmount = (hits === 6 && currentGameMode === 'standard') ? 
+                        Math.floor(Math.random() * (57000000 - 3000000 + 1)) + 3000000 : 
+                        config.prizeTable[hits];
+                        
+                    simulationResults.totalPrizeMoney += winAmount;
+                }
+            }
+            
+            // Wyświetl wyniki symulacji
+            displaySimulationResults(simulationResults);
+        }
+
+        // Wyświetlanie wyników symulacji
+        function displaySimulationResults(results) {
+            const container = document.getElementById('simulation-results');
+            const config = gameConfig[currentGameMode];
+            
+            let html = `
+                <h3>Wyniki symulacji ${results.totalCoupons} kuponów</h3>
+                <p><strong>Łączny koszt:</strong> ${formatCurrency(results.totalCost)}</p>
+                <p><strong>Łączna wygrana:</strong> ${formatCurrency(results.totalPrizeMoney)}</p>
+                <p><strong>Profit/Strata:</strong> ${formatCurrency(results.totalPrizeMoney - results.totalCost)}</p>
+                <p><strong>Procent zwrotu kosztów:</strong> ${Math.round((results.totalPrizeMoney / results.totalCost) * 100)}%</p>
+                
+                <h4>Szczegółowe wyniki:</h4>
+                <ul>
+            `;
+            
+            // Dodaj wyniki dla każdego progu wygranej
+            for (const [hits, count] of Object.entries(results.wins)) {
+                if (count > 0) {
+                    const prize = (hits === '6' && currentGameMode === 'standard') ? 
+                        "kumulacja" : 
+                        formatCurrency(config.prizeTable[hits]);
+                        
+                    html += `
+                        <li>${hits} trafień: ${count} razy (${prize})</li>
+                    `;
+                }
+            }
+            
+            html += `</ul>`;
+            
+            container.innerHTML = html;
+        }
+
+        // Ustawienie nasłuchiwaczy zdarzeń
+        function setupEventListeners() {
+            // Zmiana trybu gry
+            document.querySelectorAll('input[name="gameMode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentGameMode = this.value;
+                    initNumberInputs();
+                    initPrizeTable();
+                    
+                    // Ukryj sekcję kumulacji dla Mini Lotto
+                    document.getElementById('jackpot-section').style.display = 
+                        currentGameMode === 'standard' ? 'block' : 'none';
+                });
+            });
+            
+            // Przycisk czyszczenia liczb
+            document.getElementById('clear-user-numbers').addEventListener('click', () => {
+                const inputs = document.querySelectorAll('#user-numbers-inputs input');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                userNumbers = Array(gameConfig[currentGameMode].numbersCount).fill(null);
+                document.getElementById('matched-numbers-count').textContent = '0';
+                document.getElementById('matched-numbers-display').innerHTML = '';
+                document.getElementById('simulated-win-amount').textContent = '0 zł';
+            });
+            
+            // Przyciski szybkiego strzału
+            document.getElementById('quick-pick-random').addEventListener('click', () => quickPick('random'));
+            document.getElementById('quick-pick-even').addEventListener('click', () => quickPick('even'));
+            document.getElementById('quick-pick-odd').addEventListener('click', () => quickPick('odd'));
+            document.getElementById('quick-pick-close').addEventListener('click', () => quickPick('close'));
+            
+            // Przycisk losowania liczb
+            document.getElementById('draw-numbers-btn').addEventListener('click', drawNumbers);
+            
+            // Resetowanie statystyk
+            document.getElementById('reset-stats-btn').addEventListener('click', () => {
+                if (confirm('Czy na pewno chcesz zresetować wszystkie statystyki?')) {
+                    stats = {
+                        totalDraws: 0,
+                        wins: { 3: 0, 4: 0, 5: 0, 6: 0 },
+                        totalPrizeMoney: 0,
+                        totalCost: 0,
+                        profitLoss: 0,
+                        roi: 0,
+                        winPercentage: 0
+                    };
+                    saveStats();
+                    updateStatsDisplay();
+                }
+            });
+            
+            // Symulacja wielu kuponów
+            document.getElementById('simulate-coupons-btn').addEventListener('click', simulateMultipleCoupons);
+        }
+    </script>
+</body>
+</html>
