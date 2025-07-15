@@ -788,7 +788,22 @@
             } else {
                 document.getElementById('user-numbers-error').style.display = 'none';
             }
-            // Animacja losowania
+            // Jeśli aktywny automatyczny szybki strzał, najpierw animuj quickPick, potem losuj liczby
+            if (document.getElementById('auto-quick-pick').checked) {
+                const quickBtn = document.getElementById('quick-pick-random');
+                quickBtn.classList.add('btn-anim-spin');
+                setTimeout(() => quickBtn.classList.remove('btn-anim-spin'), 600);
+                quickPickWithCallback('random', () => {
+                    // Po animacji quickPick losuj liczby
+                    doDrawNumbers();
+                });
+            } else {
+                doDrawNumbers();
+            }
+        }
+
+        function doDrawNumbers() {
+            const config = gameConfig[currentGameMode];
             const drawBtn = document.getElementById('draw-numbers-btn');
             drawBtn.classList.add('btn-anim-spin');
             setTimeout(() => drawBtn.classList.remove('btn-anim-spin'), 600);
@@ -800,19 +815,68 @@
                 }
             }
             drawnNumbers.sort((a, b) => a - b);
-            displayNumbers(drawnNumbers, 'lotto-draw-display');
+            displayNumbers(drawnNumbers, 'lotto-draw-display', true); // true = highlight hits
             checkResults();
-            // Animacja szybkiego strzału jeśli aktywny
-            if (document.getElementById('auto-quick-pick').checked) {
-                const quickBtn = document.getElementById('quick-pick-random');
-                quickBtn.classList.add('btn-anim-spin');
-                setTimeout(() => quickBtn.classList.remove('btn-anim-spin'), 600);
-                setTimeout(() => quickPick('random'), 400);
+        }
+
+        // Animowany quickPick z callbackiem po zakończeniu
+        function quickPickWithCallback(strategy, callback) {
+            const config = gameConfig[currentGameMode];
+            const numbers = [];
+            switch(strategy) {
+                case 'random':
+                    while (numbers.length < config.numbersCount) {
+                        const randomNum = Math.floor(Math.random() * (config.maxNumber - config.minNumber + 1)) + config.minNumber;
+                        if (!numbers.includes(randomNum)) {
+                            numbers.push(randomNum);
+                        }
+                    }
+                    break;
+                case 'even':
+                    const evenNumbers = Array.from({length: config.maxNumber}, (_, i) => i + 1)
+                        .filter(num => num % 2 === 0);
+                    shuffleArray(evenNumbers);
+                    numbers.push(...evenNumbers.slice(0, config.numbersCount));
+                    break;
+                case 'odd':
+                    const oddNumbers = Array.from({length: config.maxNumber}, (_, i) => i + 1)
+                        .filter(num => num % 2 !== 0);
+                    shuffleArray(oddNumbers);
+                    numbers.push(...oddNumbers.slice(0, config.numbersCount));
+                    break;
+                case 'close':
+                    const start = Math.floor(Math.random() * (config.maxNumber - config.numbersCount - config.minNumber + 1)) + config.minNumber;
+                    for (let i = 0; i < config.numbersCount; i++) {
+                        numbers.push(start + i);
+                    }
+                    break;
             }
+            numbers.sort((a, b) => a - b);
+            const inputs = document.querySelectorAll('#user-numbers-inputs input');
+            let i = 0;
+            function animateInput() {
+                if (i < numbers.length) {
+                    inputs[i].value = numbers[i];
+                    userNumbers[i] = numbers[i];
+                    inputs[i].classList.add('input-quickpick');
+                    setTimeout(() => {
+                        inputs[i].classList.remove('input-quickpick');
+                        i++;
+                        animateInput();
+                    }, 90);
+                } else {
+                    updateUserNumbersCounter();
+                    if (typeof callback === 'function') callback();
+                }
+            }
+            for (let j = 0; j < inputs.length; j++) {
+                inputs[j].classList.remove('input-quickpick');
+            }
+            animateInput();
         }
 
         // Wyświetlanie liczb w kontenerze
-        function displayNumbers(numbers, containerId) {
+        function displayNumbers(numbers, containerId, highlightHits) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             if (containerId === 'matched-numbers-display') {
@@ -827,6 +891,10 @@
                     const ball = document.createElement('div');
                     ball.className = 'number-ball';
                     ball.textContent = num;
+                    // Podświetl na zielono jeśli trafione
+                    if (highlightHits && userNumbers.includes(num)) {
+                        ball.classList.add('matched');
+                    }
                     container.appendChild(ball);
                 });
             }
